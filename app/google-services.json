@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "811088565611",
+    "project_id": "labstocker",
+    "storage_bucket": "labstocker.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:811088565611:android:5e89f121fae026ccc0282e",
+        "android_client_info": {
+          "package_name": "bcf.tfc.labstocker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAhGLpvCUewKCNzgYvrmWOfh86NAreuCc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
