@@ -12,7 +12,14 @@ import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
 
+import bcf.tfc.labstocker.MainActivity;
 import bcf.tfc.labstocker.R;
+import bcf.tfc.labstocker.adapters.ItemFeed;
+import bcf.tfc.labstocker.model.DataModel;
+import bcf.tfc.labstocker.model.data.Laboratory;
+import bcf.tfc.labstocker.model.data.Location;
+import bcf.tfc.labstocker.model.data.Subject;
+import bcf.tfc.labstocker.model.data.Warehouse;
 
 
 public class Utils {
@@ -45,6 +52,35 @@ public class Utils {
         return dialog;
     }
 
+    public static @NonNull AlertDialog getDeleteDialog(Context context, Object item)  {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.delete);
+        builder.setMessage(R.string.delete_confirmation);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (item instanceof ItemFeed) {
+                    ((ItemFeed) item).delete();
+                } else if (item instanceof Subject) {
+                    DataModel.deleteSubject((Subject) item);
+                } else if (item instanceof Warehouse || item instanceof Laboratory) {
+                    DataModel.deleteLocation((Location) item);
+                }
+
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        return dialog;
+    }
+
+
     /**
      *
      * @param view
@@ -75,10 +111,6 @@ public class Utils {
         }
 
     }
-
-
-
-
 
     public static @NonNull String getNewScreen(String screen) {
         switch (screen) {

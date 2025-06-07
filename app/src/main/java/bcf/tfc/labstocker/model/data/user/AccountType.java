@@ -13,4 +13,13 @@ public enum AccountType {
     public int getId() {
         return id;
     }
+
+    public static AccountType fromId(int id) {
+        for (AccountType accountType : AccountType.values()) {
+            if (accountType.getId() == id) {
+                return accountType;
+            }
+        }
+        return null;
+    }
 }

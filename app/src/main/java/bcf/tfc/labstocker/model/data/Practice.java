@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bcf.tfc.labstocker.model.DataModel;
 import bcf.tfc.labstocker.utils.Utils;
 
 public class Practice {
@@ -31,8 +32,6 @@ public class Practice {
             this.id = id;
         }
     }
-
-
 
     public String getId() {
         return id;
@@ -104,17 +103,21 @@ public class Practice {
 
         List<Map<String, Object>> labInstList = new ArrayList<>();
         for (Map.Entry<LabInstrument, Quantity> entry : labInstruments.entrySet()) {
-            Map<String, Object> item = entry.getKey().toMap();
-            item.putAll(entry.getValue().toMap());
-            labInstList.add(item);
+            Map<String, Object> iMap = new HashMap<>();
+            iMap.put("id",entry.getKey().getId());
+            iMap.put("value", entry.getValue().getValue());
+            iMap.put("unit", entry.getValue().getUnit());
+            labInstList.add(iMap);
         }
-        map.put("labInstruments", labInstList);
+        map.put("instruments", labInstList);
 
         List<Map<String, Object>> reagentList = new ArrayList<>();
         for (Map.Entry<Reagent, Quantity> entry : reagents.entrySet()) {
-            Map<String, Object> item = entry.getKey().toMap();
-            item.putAll(entry.getValue().toMap());
-            reagentList.add(item);
+            Map<String, Object> rMap = new HashMap<>();
+            rMap.put("id",entry.getKey().getId());
+            rMap.put("value", entry.getValue().getValue());
+            rMap.put("unit", entry.getValue().getUnit());
+            reagentList.add(rMap);
         }
         map.put("reagents", reagentList);
 
@@ -128,12 +131,12 @@ public class Practice {
         Practice practice = new Practice(id, name);
 
         HashMap<LabInstrument, Quantity> instruments = new HashMap<>();
-        List<Map<String, Object>> instList = (List<Map<String, Object>>) map.get("labInstruments");
+        List<Map<String, Object>> instList = (List<Map<String, Object>>) map.get("instruments");
         if (instList != null) {
             for (Map<String, Object> entry : instList) {
-                LabInstrument inst = LabInstrument.fromMap(entry);
-                Quantity qty = Quantity.fromMap(entry);
-                instruments.put(inst, qty);
+                LabInstrument i = DataModel.getLabInstrument((String) entry.get("id"));
+                Quantity q = Quantity.fromMap(entry);
+                instruments.put(i, q);
             }
         }
 
@@ -141,9 +144,9 @@ public class Practice {
         List<Map<String, Object>> reagentList = (List<Map<String, Object>>) map.get("reagents");
         if (reagentList != null) {
             for (Map<String, Object> entry : reagentList) {
-                Reagent reagent = Reagent.fromMap(entry);
-                Quantity qty = Quantity.fromMap(entry);
-                reagents.put(reagent, qty);
+                Reagent r = DataModel.getReagent((String) entry.get("id"));
+                Quantity q = Quantity.fromMap(entry);
+                reagents.put(r, q);
             }
         }
 
@@ -151,5 +154,13 @@ public class Practice {
         practice.addAllReagents(reagents);
 
         return practice;
+    }
+
+    public void removeItem(String id) {
+        if (id.contains("I")){
+            this.labInstruments.remove(DataModel.getLabInstrument(id));
+        } else {
+            this.reagents.remove(DataModel.getReagent(id));
+        }
     }
 }

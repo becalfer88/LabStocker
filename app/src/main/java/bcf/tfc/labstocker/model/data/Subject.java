@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bcf.tfc.labstocker.adapters.ItemFeed;
 import bcf.tfc.labstocker.utils.Utils;
 
 public class Subject {
@@ -32,6 +33,8 @@ public class Subject {
         this.practices = new ArrayList<>();
         if (id == null) {
             this.id = Utils.generateId("S",name, career);
+        } else {
+            this.id = id;
         }
     }
 
@@ -121,11 +124,24 @@ public class Subject {
         int year = (int) (long) map.get("year");
         int semester = (int) (long) map.get("semester");
         Subject subject = new Subject(id, name, career, year, semester);
-        ArrayList<Practice> practices = new ArrayList<>();
-        List<Map<String, Object>> practicesMap = (List<Map<String, Object>>) map.get("practices");
-        for (int i = 0; i < practicesMap.size(); i++) {
-            practices.add(Practice.fromMap(practicesMap.get(i)));
-        }
+
         return subject;
+    }
+
+    public void removeItem(String id) {
+        for (int i = 0; i < practices.size(); i++) {
+            if (practices.get(i).getId().equals(id)) {
+                practices.remove(i);
+            }
+        }
+    }
+
+    public ArrayList<ItemFeed> getPracticesFeed() {
+        ArrayList<ItemFeed> practicesFeed = new ArrayList<>();
+        for (int i = 0; i < practices.size(); i++) {
+            Practice p = practices.get(i);
+            practicesFeed.add(new ItemFeed(p.getId(), p.getName(),null, this.name));
+        }
+        return practicesFeed;
     }
 }

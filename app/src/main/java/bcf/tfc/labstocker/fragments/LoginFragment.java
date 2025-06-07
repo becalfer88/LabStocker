@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
+import java.util.List;
+
 import bcf.tfc.labstocker.LogActivity;
 import bcf.tfc.labstocker.MainActivity;
 import bcf.tfc.labstocker.R;

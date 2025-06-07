@@ -7,7 +7,9 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import bcf.tfc.labstocker.MainActivity;
 import bcf.tfc.labstocker.R;
 
 /**
@@ -17,11 +19,9 @@ import bcf.tfc.labstocker.R;
  */
 public class HomeFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ACCOUNT_TEXT = "account";
 
-    // TODO: Rename and change types of parameters
     private String mAccount;
 
     public HomeFragment() {
@@ -35,7 +35,7 @@ public class HomeFragment extends Fragment {
      * @param account Parameter 1.
      * @return A new instance of fragment HomeFragment.
      */
-    // TODO: Rename and change types and number of parameters
+
     public static HomeFragment newInstance(String account) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -56,6 +56,19 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        Button searchBtn = view.findViewById(R.id.search);
+        Button moveItemBtn = view.findViewById(R.id.move_rss);
+
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchFragment fragment = SearchFragment.newInstance(true);
+                ((MainActivity)getActivity()).loadFragment(fragment);
+            }
+        });
+
+        return view;
     }
 }

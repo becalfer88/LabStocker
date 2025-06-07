@@ -38,8 +38,19 @@ public class SplashScreen extends AppCompatActivity {
 
         FirebaseApp.initializeApp(this);
 
-        DataModel.dataInit();
-        splashScreenStart();
+        DataModel.dataInit(new DBCallback<Boolean>() {
+                               @Override
+                               public void onSuccess(Boolean result) {
+                                   splashScreenStart();
+                               }
+
+                               @Override
+                               public void onFailure(Exception e) {
+
+                               }
+                           }
+        );
+        //splashScreenStart();
         SharedPreferences sharedPreferences = getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
 
         account = sharedPreferences.getString(ACCOUNT_TEXT, "");

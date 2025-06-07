@@ -10,6 +10,8 @@ import java.util.Map;
  */
 public class Account {
 
+    private static int lastAccountId = 0;
+
     private int id;
     private String email;
     private String name;
@@ -26,13 +28,17 @@ public class Account {
      *
      * @param email
      * @param password
-     * @param read    It determine if the account is read from the database on if it is a new one
+     * @param name
      */
-    public Account(String email, String password, Boolean read) {
+    public Account(String email, String password, String name) {
+        lastAccountId++;
+        this.id = lastAccountId;
         this.email = email;
         this.password = password;
         this.type = AccountType.BASIC;
-        if (!read) {
+        if (name != null) {
+            this.name = name;
+        } else {
             this.name = email.split("@")[0];
         }
     }
@@ -108,7 +114,7 @@ public class Account {
         account.setEmail((String) map.get("email"));
         account.setName((String) map.get("name"));
         account.setPassword((String) map.get("password"));
-        account.setType(AccountType.values()[(int) (long) map.get("type")]);
+        account.setType(AccountType.fromId((int) (long) map.get("type")));
         return account;
     }
 }

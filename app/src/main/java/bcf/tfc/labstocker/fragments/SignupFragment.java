@@ -104,7 +104,7 @@ public class SignupFragment extends Fragment {
      * @param password Password field
      */
     private void saveAccount(EditText email, EditText password) {
-        Account account = DataModel.addAccount(email.getEditableText().toString(), password.getEditableText().toString(), false);
+        Account account = DataModel.addAccount(email.getEditableText().toString(), password.getEditableText().toString(), null);
         DBManager.upsertAccount(account, new DBCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {

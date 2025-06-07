@@ -35,46 +35,53 @@ public class DataModel {
     public static ArrayList<Reagent> reagents = new ArrayList<>();
     public static ArrayList<LabInstrument> labInstruments = new ArrayList<>();
 
+    //
+    public static void dataInit(DBCallback<Boolean> finalCB) {
 
+        chargeAccounts(() ->
+                chargeReagents(() ->
+                        chargeInstruments(() ->
+                                chargeWarehouses(() ->
+                                        chargeLaboratories(() ->
+                                                chargeSubjects(() ->
+                                                        fillPractices(0, () -> finalCB.onSuccess(true))
+                                                )
+                                        )
+                                )
+                        )
+                )
+        );
+    }
 
-    //DBCallback<Boolean> finalCB
-    public static void dataInit() {
-
-/*        DBManager.getSubjects(new DBCallback<List<Subject>>() {
+    private static void chargeAccounts(Runnable onComplete) {
+        DBManager.getAllAccounts(new DBCallback<List<Account>>() {
             @Override
-            public void onSuccess(List<Subject> resultSubjects) {
-                subjects.clear();
-                subjects.addAll(resultSubjects);
-
-                // Ahora cargamos las prácticas de cada asignatura
-                fillPractices(0, () -> {
-                    // Una vez terminadas las prácticas, cargamos el resto
-                    chargeReagents(() ->
-                            chargeInstruments(() ->
-                                    chargeWarehouses(() ->
-                                            chargeLaboratories(() -> {
-                        finalCB.onSuccess(true); // Everything charged
-                    }))));
-                });
+            public void onSuccess(List<Account> result) {
+                accounts.addAll(result);
+                onComplete.run();
             }
 
             @Override
             public void onFailure(Exception e) {
-                finalCB.onFailure(e);
+                onComplete.run();
             }
-        });*/
+        });
+    }
 
-        addSubject(null,"Subject 1", "Career 1", 1, 1 );
-        getSubject("Subject 1", "Career 1").setId("1");
-        addSubject(null,"Subject 2", "Career 2", 2, 2 );
-        getSubject("Subject 2", "Career 2").setId("2");
-        addSubject(null, "Subject 3", "Career 1", 1, 2 );
-        getSubject("Subject 3", "Career 1").setId("3");
-        addWarehouse("Address 1", false);
-        getWarehouse("Address 1").setId("LOC1");
-        addLaboratory("Address 2", getWarehouse("Address 1"), false);
-        getLaboratory("Address 2").setId("LOC2");
+    private static void chargeSubjects(Runnable onComplete) {
+        DBManager.getSubjects(new DBCallback<List<Subject>>() {
+            @Override
+            public void onSuccess(List<Subject> resultSubjects) {
+                subjects.clear();
+                subjects.addAll(resultSubjects);
+                onComplete.run();
+            }
 
+            @Override
+            public void onFailure(Exception e) {
+                onComplete.run(); // Puedes registrar el error si quieres
+            }
+        });
     }
 
     public static void fillPractices(int index, Runnable onComplete) {
@@ -87,14 +94,15 @@ public class DataModel {
 
         DBManager.getPractices(subject, new DBCallback<List<Practice>>() {
             @Override
-            public void onSuccess(List<Practice> practices) {
-                subject.addAllPractices(new ArrayList<>(practices));
+            public void onSuccess(List<Practice> practicesList) {
+                subject.addAllPractices(new ArrayList<>(practicesList));
+                practices.addAll(practicesList);
                 fillPractices(index + 1, onComplete);
             }
 
             @Override
             public void onFailure(Exception e) {
-                onComplete.run(); // Continuamos incluso si una falla
+                onComplete.run(); // Go on even if there is an error
             }
         });
     }
@@ -162,17 +170,21 @@ public class DataModel {
     }
 
 
-
     // Accounts
-    public static Account addAccount(String email, String password, boolean read) {
-        Account account = new Account(email, password, read);
+    public static Account addAccount(String email, String password, String name) {
+        Account account = new Account(email, password, name);
+        accounts.add(account);
+        return account;
+    }
+
+    public static Account addAccount(Account account) {
         accounts.add(account);
         return account;
     }
 
     public static Account getAccount(String email) {
         for (Account account : accounts) {
-            if (account.getEmail().equals(email)){
+            if (account.getEmail().equals(email)) {
                 return account;
             }
         }
@@ -181,7 +193,7 @@ public class DataModel {
 
     public static Account getAccount(int id) {
         for (Account account : accounts) {
-            if (account.getId() == id){
+            if (account.getId() == id) {
                 return account;
             }
         }
@@ -197,9 +209,15 @@ public class DataModel {
         subjects.add(subject);
     }
 
+    public static void updateSubject( Subject subject, String name, String career, int year, int semester) {
+        subject.setName(name);
+        subject.setCareer(career);
+        subject.setYear(year);
+        subject.setSemester(semester);
+    }
     public static Subject getSubject(String id) {
         for (Subject subject : subjects) {
-            if (subject.getId().equals(id)){
+            if (subject.getId().equals(id)) {
                 return subject;
             }
         }
@@ -208,17 +226,31 @@ public class DataModel {
 
     public static Subject getSubject(String name, String career) {
         for (Subject subject : subjects) {
-            if (subject.getName().equals(name) && subject.getCareer().equals(career)){
+            if (subject.getName().equals(name) && subject.getCareer().equals(career)) {
                 return subject;
             }
         }
         return null;
     }
 
+    public static void deleteSubject(Subject subject) {
+        subjects.remove(subject);
+        DBManager.deleteSubject(subject.getId(), new DBCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                Log.i("Subject", "Subject deleted");
+            }
+            @Override
+            public void onFailure(Exception e) {
+                // Do nothing
+            }
+        });
+    }
+
     public static ArrayList<Subject> getSubjectsByCareer(String career) {
         ArrayList<Subject> subjectsResult = new ArrayList<>();
         for (Subject subject : subjects) {
-            if (subject.getCareer().equals(career)){
+            if (subject.getCareer().equals(career)) {
                 subjectsResult.add(subject);
             }
         }
@@ -236,13 +268,13 @@ public class DataModel {
     }
 
     public static void addPractice(String name, Subject subject) {
-        Practice practice = new Practice(null,name);
+        Practice practice = new Practice(null, name);
         practices.add(practice);
     }
 
     public static Practice getPractice(String id) {
         for (Practice practice : practices) {
-            if (practice.getId().equals(id)){
+            if (practice.getId().equals(id)) {
                 return practice;
             }
         }
@@ -264,13 +296,13 @@ public class DataModel {
     }
 
     public static void addReagent(String formula, ReagentType type, String status, String description, String concentration) {
-        Reagent reagent = new Reagent(null,formula, type, status, description, concentration);
+        Reagent reagent = new Reagent(null, formula, type, description, concentration);
         reagents.add(reagent);
     }
 
-    public static Reagent getReagent(String formula) {
+    public static Reagent getReagent(String id) {
         for (Reagent reagent : reagents) {
-            if (reagent.getFormula().equals(formula)){
+            if (reagent.getId().equals(id)) {
                 return reagent;
             }
         }
@@ -279,7 +311,7 @@ public class DataModel {
 
     public static Reagent getReagent(String formula, String concentration) {
         for (Reagent reagent : reagents) {
-            if (reagent.getFormula().equals(formula) && reagent.getConcentration().equals(concentration)){
+            if (reagent.getFormula().equals(formula) && reagent.getConcentration().equals(concentration)) {
                 return reagent;
             }
         }
@@ -313,9 +345,9 @@ public class DataModel {
         labInstruments.add(labInstrument);
     }
 
-    public static LabInstrument getLabInstrument(String name) {
+    public static LabInstrument getLabInstrument(String id) {
         for (LabInstrument labInstrument : labInstruments) {
-            if (labInstrument.getName().equals(name)){
+            if (labInstrument.getId().equals(id)) {
                 return labInstrument;
             }
         }
@@ -345,13 +377,18 @@ public class DataModel {
     }
 
     public static void addLaboratory(String labAddress, Warehouse warehouse, Boolean read) {
-            Laboratory laboratory = new Laboratory(labAddress, warehouse, read);
-            locations.add(laboratory);
+        Laboratory laboratory = new Laboratory(labAddress, warehouse, read);
+        locations.add(laboratory);
+    }
+
+    public static void updateLaboratory(Laboratory laboratory,String address, String warehouse) {
+        laboratory.setAddress(address);
+        laboratory.setWarehouse(getWarehouse(warehouse));
     }
 
     public static Laboratory getLaboratory(String address) {
         for (Location location : locations) {
-            if (location.getAddress().equals(address)){
+            if (location.getAddress().equals(address) && location instanceof Laboratory) {
                 return (Laboratory) location;
             }
         }
@@ -364,9 +401,22 @@ public class DataModel {
         locations.add(warehouse);
     }
 
+    public static void updateWarehouse(Warehouse warehouse,String address) {
+        warehouse.setAddress(address);
+    }
+
     public static Warehouse getWarehouse(String address) {
         for (Location location : locations) {
-            if (location.getAddress().equals(address)){
+            if (location.getAddress().equals(address) && location instanceof Warehouse) {
+                return (Warehouse) location;
+            }
+        }
+        return null;
+    }
+
+    public static Warehouse getWarehouseById(String id) {
+        for (Location location : locations) {
+            if (location.getId().equals(id)) {
                 return (Warehouse) location;
             }
         }
@@ -378,14 +428,14 @@ public class DataModel {
         switch (type) {
             case "warehouses":
                 for (Location location : locations) {
-                    if (location instanceof Warehouse){
+                    if (location instanceof Warehouse) {
                         locationsResult.add(location);
                     }
                 }
                 break;
             case "laboratories":
                 for (Location location : locations) {
-                    if (location instanceof Laboratory){
+                    if (location instanceof Laboratory) {
                         locationsResult.add(location);
                     }
                 }
@@ -396,11 +446,25 @@ public class DataModel {
 
     public static Location getLocation(String id) {
         for (Location location : locations) {
-            if (location.getId().equals(id)){
+            if (location.getId().equals(id)) {
                 return location;
             }
         }
         return null;
+    }
+
+    public static void deleteLocation(Location location) {
+        locations.remove(location);
+        DBManager.deleteLocation(location, new DBCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                Log.d("Location deleted", location.getAddress());
+            }
+            @Override
+            public void onFailure(Exception e) {
+                // Do nothing
+            }
+        });
     }
 
     public static void setNextLocationId(Location location) {
@@ -419,8 +483,19 @@ public class DataModel {
         });
 
     }
+
     public static boolean isAdmin(String email) {
         Account account = getAccount(email);
         return account != null && account.isAdmin();
+    }
+
+    public static void removeItem(Object parent, String id) {
+        if (parent instanceof Practice) {
+            ((Practice) parent).removeItem(id);
+        } else if (parent instanceof Location) {
+            ((Location) parent).removeItem(id);
+        } else if (parent instanceof Subject) {
+            ((Subject) parent).removeItem(id);
+        }
     }
 }

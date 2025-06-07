@@ -52,4 +52,7 @@
     <string name="account_exists">Account already exists.</string>
     <string name="impossible_check">Impossible to check if the account exists. Try again.</string>
     <string name="choose_a_career">Choose a career</string>
+    <string name="impossible_read_accounts">Impossible to read all accounts</string>
+    <string name="delete">Delete</string>
+    <string name="delete_confirmation">Do you really want to delete it?</string>
 </resources>

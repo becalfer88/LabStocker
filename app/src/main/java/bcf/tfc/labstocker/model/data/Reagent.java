@@ -3,14 +3,11 @@ package bcf.tfc.labstocker.model.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import bcf.tfc.labstocker.utils.Utils;
-
 public class Reagent {
 
     private String id;
     private String formula;
     private ReagentType type;
-    private String status;
     private String description;
     private String concentration;
 
@@ -19,10 +16,9 @@ public class Reagent {
      */
     public Reagent() {}
 
-    public Reagent(String id, String formula, ReagentType type, String status, String description, String concentration) {
+    public Reagent(String id, String formula, ReagentType type, String description, String concentration) {
         this.formula = formula;
         this.type = type;
-        this.status = status;
         this.description = description;
         this.concentration = concentration;
         if (id == null) {
@@ -56,14 +52,6 @@ public class Reagent {
         this.type = type;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -90,7 +78,6 @@ public class Reagent {
         map.put("id", id);
         map.put("formula", formula);
         map.put("type", type);
-        map.put("status", status);
         map.put("description", description);
         map.put("concentration", concentration);
         return map;
@@ -103,6 +90,6 @@ public class Reagent {
         String status = (String) map.get("status");
         String description = (String) map.get("description");
         String concentration = (String) map.get("concentration");
-        return new Reagent(id, formula, type, status, description, concentration);
+        return new Reagent(id, formula, type, description, concentration);
     }
 }

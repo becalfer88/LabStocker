@@ -2,6 +2,8 @@ package bcf.tfc.labstocker.model.data;
 
 import java.util.Map;
 
+import bcf.tfc.labstocker.model.DataModel;
+
 public class Laboratory extends Location {
 
 
@@ -36,13 +38,13 @@ public class Laboratory extends Location {
     public static Laboratory fromMap(Map<String, Object> map) {
         Laboratory lab = new Laboratory();
         Location.fromMap(lab, map);
-
-        Map<String, Object> warehouseMap = (Map<String, Object>) map.get("warehouse");
-        if (warehouseMap != null) {
-            Warehouse wh = Warehouse.fromMap(warehouseMap);
+        String warehouse = (String) map.get("warehouse");
+        if (warehouse != null) {
+            Warehouse wh = DataModel.getWarehouseById(warehouse);
             lab.setWarehouse(wh);
         }
 
         return lab;
     }
+
 }

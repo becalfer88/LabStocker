@@ -4,10 +4,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +57,21 @@ public class DBManager {
                 .addOnFailureListener(cb::onFailure);
     }
 
+    public static void getAllAccounts(DBCallback<List<Account>> cb) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users")
+                .get()
+                .addOnSuccessListener(collectionRef -> {
+                    List<Account> accounts = new ArrayList<>();
+                    for (DocumentSnapshot doc : collectionRef.getDocuments()) {
+                        accounts.add(Account.fromMap(doc.getData()));
+                    }
+                    cb.onSuccess(accounts);
+                })
+                .addOnFailureListener(cb::onFailure);
+    }
+
     public static void deleteAccount(int id, DBCallback<Boolean> cb) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -101,8 +116,11 @@ public class DBManager {
 
         db.collection("subjects")
                 .get()
-                .addOnSuccessListener(docRef -> {
-                    List<Subject> subjects = docRef.toObjects(Subject.class);
+                .addOnSuccessListener(collectionRef -> {
+                    List<Subject> subjects = new ArrayList<>();
+                    for (DocumentSnapshot doc : collectionRef.getDocuments()) {
+                        subjects.add(Subject.fromMap(doc.getData()));
+                    }
                     cb.onSuccess(subjects);
                 })
                 .addOnFailureListener(cb::onFailure);
@@ -136,8 +154,11 @@ public class DBManager {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("subjects/" + subject.getId() + "/practices")
                 .get()
-                .addOnSuccessListener(docRef -> {
-                    List<Practice> practices = docRef.toObjects(Practice.class);
+                .addOnSuccessListener(collectionRef -> {
+                    List<Practice> practices = new ArrayList<>();
+                    for (DocumentSnapshot doc : collectionRef.getDocuments()) {
+                        practices.add(Practice.fromMap(doc.getData()));
+                    }
                     cb.onSuccess(practices);
                 })
                 .addOnFailureListener(cb::onFailure);
@@ -157,8 +178,8 @@ public class DBManager {
     public static void upsertReagent(Reagent reagent, DBCallback<Boolean> cb) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.document("supplies/data/reagents")
-                .update("regent" + reagent.getId(),reagent.toMap())
+        db.document("reagents/"+reagent.getId())
+                .update(reagent.toMap())
                 .addOnSuccessListener(docRef -> {
                     cb.onSuccess(true);
                 })
@@ -168,10 +189,13 @@ public class DBManager {
     public static void getReagents(DBCallback<List<Reagent>> cb) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("supplies/data/reagents")
+        db.collection("reagents")
                 .get()
-                .addOnSuccessListener(docRef -> {
-                    List<Reagent> reagents = docRef.toObjects(Reagent.class);
+                .addOnSuccessListener(collectionRef -> {
+                    List<Reagent> reagents = new ArrayList<>();
+                    for (DocumentSnapshot doc : collectionRef.getDocuments()) {
+                        reagents.add(Reagent.fromMap(doc.getData()));
+                    }
                     cb.onSuccess(reagents);
                 })
                 .addOnFailureListener(cb::onFailure);
@@ -180,8 +204,8 @@ public class DBManager {
     public static void upsertLabInstrument(LabInstrument labInstrument, DBCallback<Boolean> cb) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.document("supplies/data/instruments")
-                .update("instrument" + labInstrument.getId(),  labInstrument.toMap())
+        db.document("instruments"+ labInstrument.getId())
+                .update(labInstrument.toMap())
                 .addOnSuccessListener(docRef -> {
                     cb.onSuccess(true);
                 })
@@ -191,10 +215,13 @@ public class DBManager {
     public static void getLabInstruments(DBCallback<List<LabInstrument>> cb) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("supplies/data/instruments")
+        db.collection("instruments")
                 .get()
-                .addOnSuccessListener(docRef -> {
-                    List<LabInstrument> labInstruments = docRef.toObjects(LabInstrument.class);
+                .addOnSuccessListener(collectionRef -> {
+                    List<LabInstrument> labInstruments = new ArrayList<>();
+                    for (DocumentSnapshot doc : collectionRef.getDocuments()) {
+                        labInstruments.add(LabInstrument.fromMap(doc.getData()));
+                    }
                     cb.onSuccess(labInstruments);
                 })
                 .addOnFailureListener(cb::onFailure);
@@ -206,15 +233,15 @@ public class DBManager {
         Map<String, Object> newLocation = location.toMap();
 
         if (location instanceof Warehouse) {
-            db.document("locations/data/warehouses")
-                    .update("warehouse" + location.getId(), newLocation)
+            db.document("warehouses")
+                    .update("w" + location.getId(), newLocation)
                     .addOnSuccessListener(docRef -> {
                         cb.onSuccess(true);
                     })
                     .addOnFailureListener(cb::onFailure);
         } else {
-            db.document("locations/data/laboratories")
-                    .update("laboratory" + location.getId(), newLocation)
+            db.document("laboratories")
+                    .update("l" + location.getId(), newLocation)
                     .addOnSuccessListener(docRef -> {
                         cb.onSuccess(true);
                     })
@@ -225,10 +252,13 @@ public class DBManager {
     public static void getLabs(DBCallback<List<Laboratory>> cb) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("locations/data/laboratories")
+        db.collection("laboratories")
                 .get()
-                .addOnSuccessListener(docRef -> {
-                    List<Laboratory> locations = docRef.toObjects(Laboratory.class);
+                .addOnSuccessListener(collectionRef -> {
+                    List<Laboratory> locations =new ArrayList<>();
+                    for (DocumentSnapshot doc : collectionRef.getDocuments()) {
+                        locations.add(Laboratory.fromMap(doc.getData()));
+                    }
                     cb.onSuccess(locations);
                 })
                 .addOnFailureListener(cb::onFailure);
@@ -237,10 +267,13 @@ public class DBManager {
     public static void getWarehouses(DBCallback<List<Warehouse>> cb) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("locations/data/warehouses")
+        db.collection("warehouses")
                 .get()
-                .addOnSuccessListener(docRef -> {
-                    List<Warehouse> locations = docRef.toObjects(Warehouse.class);
+                .addOnSuccessListener(collectionRef -> {
+                    List<Warehouse> locations = new ArrayList<>();
+                    for (DocumentSnapshot doc : collectionRef.getDocuments()) {
+                        locations.add(Warehouse.fromMap(doc.getData()));
+                    }
                     cb.onSuccess(locations);
                 })
                 .addOnFailureListener(cb::onFailure);
@@ -250,15 +283,15 @@ public class DBManager {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         if (location instanceof Warehouse) {
-            db.document("locations/data/warehouses")
-                    .update("warehouse" + location.getId(), FieldValue.delete())
+            db.document("warehouses/w" + location.getId())
+                    .delete()
                     .addOnSuccessListener(docRef -> {
                         cb.onSuccess(true);
                     })
                     .addOnFailureListener(cb::onFailure);
         } else {
-            db.document("locations/data/laboratories")
-                    .update("laboratory" + location.getId(), FieldValue.delete())
+            db.document("laboratories/l" + location.getId())
+                    .delete()
                     .addOnSuccessListener(docRef -> {
                         cb.onSuccess(true);
                     })
@@ -269,8 +302,8 @@ public class DBManager {
     public static void getLastLocationId(DBCallback<Integer> cb) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        CollectionReference labsRef = db.collection("locations/data/laboratories");
-        CollectionReference warehousesRef = db.collection("locations/data/warehouses");
+        CollectionReference labsRef = db.collection("laboratories");
+        CollectionReference warehousesRef = db.collection("warehouses");
 
         List<Task<QuerySnapshot>> tasks = Arrays.asList(
                 labsRef.get(),
@@ -283,7 +316,7 @@ public class DBManager {
                     for (Object result : results) {
                         QuerySnapshot resultCollection = (QuerySnapshot) result;
                         for (DocumentSnapshot doc : resultCollection.getDocuments()) {
-                            String id = doc.getId();
+                            String id = doc.getString("id");
                             if (id.toUpperCase().matches("LOC\\d+")) {
                                 int currentID = Integer.parseInt(id.substring(3));
                                 if (currentID > maxID) {
@@ -296,6 +329,7 @@ public class DBManager {
                 })
                 .addOnFailureListener(cb::onFailure);
     }
+
 
 
 }

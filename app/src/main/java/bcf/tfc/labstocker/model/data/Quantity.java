@@ -1,5 +1,7 @@
 package bcf.tfc.labstocker.model.data;
 
+import androidx.annotation.NonNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,5 +47,11 @@ public class Quantity {
         double value = ((Number) map.get("value")).doubleValue();
         String unit = (String) map.get("unit");
         return new Quantity(value, unit);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return (this.unit !=null) ? value + " " + unit: value + "";
     }
 }

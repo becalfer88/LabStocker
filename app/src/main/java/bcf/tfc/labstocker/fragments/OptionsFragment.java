@@ -149,13 +149,9 @@ public class OptionsFragment extends Fragment {
                 Utils.setVisibility(alertComponents);
                 String[] careers = DataModel.getAllCareers().toArray(new String[0]);
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, careers);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                mainSpinner.setAdapter(adapter);
-/*                String[] placeholder = new String[] { getString(R.string.choose_a_career) };
-                adapter= new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, placeholder);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                secondarySpinner.setAdapter(adapter);*/
+                fillSpinner(careers, mainSpinner);
+
+                // Set an item selected listener for main spinner
                 mainSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -165,16 +161,12 @@ public class OptionsFragment extends Fragment {
                         for (int i = 0; i < subjects.size(); i++) {
                             subjectsArray[i] = subjects.get(i).getName();
                         }
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, subjectsArray);
-                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        secondarySpinner.setAdapter(adapter);
+                        fillSpinner(subjectsArray, secondarySpinner);
                     }
 
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, new String[0]);
-                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        secondarySpinner.setAdapter(adapter);
+                        fillSpinner(new String[0], secondarySpinner);
                     }
                 });
                 break;
@@ -188,7 +180,7 @@ public class OptionsFragment extends Fragment {
                 for (int i = 0; i < locations.size(); i++) {
                     locationsArray[i] = locations.get(i).getAddress();
                 }
-                mainSpinner.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, locationsArray));
+                fillSpinner(locationsArray, mainSpinner);
                 break;
             }
         }
@@ -219,12 +211,6 @@ public class OptionsFragment extends Fragment {
         });
 
         AlertDialog dialog = builder.create();
-/*        dialog.setOnShowListener(d -> {
-            mainSpinner.setSelection(0);
-            ArrayList<Subject> subjects = DataModel.getSubjectsByCareer(mainSpinner.getSelectedItem().toString());
-            String[] subjectsArray = new String[subjects.size()];
-            secondarySpinner.setSelection(0);
-        });*/
 
         dialog.setOnShowListener(d -> {
             mainSpinner.post(() -> {
@@ -237,6 +223,12 @@ public class OptionsFragment extends Fragment {
         });
 
         return dialog;
+    }
+
+    private void fillSpinner(String[] careers, Spinner mainSpinner) {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, careers);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mainSpinner.setAdapter(adapter);
     }
 
     private static ArrayList<View> configSubjects(Spinner mainSpinner, Spinner secondarySpinner, TextView mainText, TextView subText) {

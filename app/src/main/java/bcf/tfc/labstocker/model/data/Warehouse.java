@@ -2,6 +2,7 @@ package bcf.tfc.labstocker.model.data;
 
 import java.util.Map;
 
+
 public class Warehouse extends Location {
 
     public Warehouse() {
@@ -18,4 +19,5 @@ public class Warehouse extends Location {
         Location.fromMap(warehouse, map);
         return warehouse;
     }
+
 }

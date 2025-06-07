@@ -96,36 +96,18 @@ public class ProfileFragment extends Fragment {
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         Account account = DataModel.getAccount(mAccount);
-        name.setText(account.getName());
-
+        if (account != null) {
+            name.setText(account.getName());
+        }
         // Read from SharedPreferences if the user is logged in order to check the checkbox
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
         boolean spLogged = sharedPreferences.getBoolean(LOGGED_TEXT, false);
-        int spAccountType = sharedPreferences.getInt(ACCOUNT_TYPE_TEXT, 0);
         String spAccount = sharedPreferences.getString(ARG_ACCOUNT, "");
 
         if (spLogged && spAccount.equals(account.getEmail())) {
             logged.setChecked(true);
         }
 
-       /* // Camera Laucher
-        ActivityResultLauncher<Intent> camLauncher = createCamLauncher(image);
-
-        // Camera action and permissions
-        edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int permissoinCheck = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA);
-
-                if (permissoinCheck != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, 225);
-                } else {
-                    Intent camIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    camLauncher.launch(camIntent);
-                }
-            }
-        });
-*/
         changeName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

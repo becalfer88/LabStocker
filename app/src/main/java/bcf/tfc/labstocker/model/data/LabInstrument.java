@@ -24,6 +24,8 @@ public class LabInstrument {
         this.observations = observations;
         if (id == null) {
             this.id = "I" + System.currentTimeMillis();
+        } else {
+            this.id = id;
         }
     }
 

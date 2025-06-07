@@ -1,10 +1,15 @@
 package bcf.tfc.labstocker.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +21,19 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import bcf.tfc.labstocker.MainActivity;
 import bcf.tfc.labstocker.R;
+import bcf.tfc.labstocker.adapters.FeedAdapter;
+import bcf.tfc.labstocker.adapters.ItemFeed;
+import bcf.tfc.labstocker.model.DBManager;
 import bcf.tfc.labstocker.model.DataModel;
+import bcf.tfc.labstocker.model.data.DBCallback;
+import bcf.tfc.labstocker.model.data.Laboratory;
 import bcf.tfc.labstocker.model.data.Location;
+import bcf.tfc.labstocker.model.data.Subject;
+import bcf.tfc.labstocker.model.data.Warehouse;
 import bcf.tfc.labstocker.utils.Utils;
 
 /**
@@ -40,6 +53,7 @@ public class FormFragment extends Fragment {
 
     private static ArrayList<View> formComponents = new ArrayList<>();
     private boolean editable = true;
+    private ArrayList<ItemFeed> itemFeed = new ArrayList<>();
 
     public FormFragment() {
         // Required empty public constructor
@@ -53,7 +67,6 @@ public class FormFragment extends Fragment {
      * @param option Parameter 2.
      * @return A new instance of fragment FormFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static FormFragment newInstance(String screen, String option) {
         FormFragment fragment = new FormFragment();
         Bundle args = new Bundle();
@@ -90,7 +103,7 @@ public class FormFragment extends Fragment {
         TextView semesterText = view.findViewById(R.id.semester_text);
         EditText semesterField = view.findViewById(R.id.semester_field);
         RecyclerView table = view.findViewById(R.id.table_list);
-        Button actionBtn = view.findViewById(R.id.action_btn);
+        Button saveBtn = view.findViewById(R.id.save_btn);
         TextView practicesText = view.findViewById(R.id.practices_text);
         ToggleButton instrumentsBtn = view.findViewById(R.id.instruments_btn);
         ToggleButton reagentsBtn = view.findViewById(R.id.reagents_btn);
@@ -113,7 +126,47 @@ public class FormFragment extends Fragment {
                     yearField.setText(String.valueOf(DataModel.getSubject(mOption).getYear()));
                     semesterField.setText(String.valueOf(DataModel.getSubject(mOption).getSemester()));
                     Utils.setEditable(formComponents, editable);
+                    itemFeed = DataModel.getSubject(mOption).getPracticesFeed();
+                    chargeRecycler(getActivity(), table, itemFeed);
                 }
+
+                saveBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String name = stringField.getText().toString();
+                        String career = spinnerField.getSelectedItem().toString();
+                        int year = Integer.parseInt(yearField.getText().toString());
+                        int semester = Integer.parseInt(semesterField.getText().toString());
+
+
+                        if (mOption.equals("new")) {
+                            DataModel.addSubject(null, name, career, year, semester);
+                            DBManager.upsertSubject(DataModel.getSubject(name, career), new DBCallback<Boolean>() {
+                                @Override
+                                public void onSuccess(Boolean exists) {
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Utils.getErrorDialog(getActivity(), e.getMessage());
+                                }
+                            });
+                        } else {
+                            Subject subject = DataModel.getSubject(mOption);
+                            DataModel.updateSubject(subject, name, career, year, semester);
+                            DBManager.upsertSubject(subject, new DBCallback<Boolean>() {
+                                @Override
+                                public void onSuccess(Boolean exists) {
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Utils.getErrorDialog(getActivity(), e.getMessage());
+                                }
+                            });
+                        }
+                    }
+                });
                 break;
             }
             case "laboratories": {
@@ -134,7 +187,45 @@ public class FormFragment extends Fragment {
                     int position = spinnerAdapter.getPosition(DataModel.getLocation(mOption).getAddress());
                     spinnerField.setSelection(position);
                     Utils.setEditable(formComponents, editable);
+                    itemFeed = DataModel.getLocation(mOption).getInstrumentFeed();
+                    itemFeed.addAll(DataModel.getLocation(mOption).getReagentFeed());
+                    chargeRecycler(getActivity(), table, itemFeed);
                 }
+
+                saveBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String address = stringField.getText().toString();
+                        String warehouse = spinnerField.getSelectedItem().toString();
+
+                        if (mOption.equals("new")) {
+                            DataModel.addLaboratory( address, DataModel.getWarehouse(warehouse),false);
+                            DBManager.upsertLocation(DataModel.getLaboratory(address), new DBCallback<Boolean>() {
+                                @Override
+                                public void onSuccess(Boolean exists) {
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Utils.getErrorDialog(getActivity(), e.getMessage());
+                                }
+                            });
+                        } else {
+                            Laboratory location = (Laboratory) DataModel.getLocation(mOption);
+                            DataModel.updateLaboratory(location, address, warehouse);
+                            DBManager.upsertLocation(location, new DBCallback<Boolean>() {
+                                @Override
+                                public void onSuccess(Boolean exists) {
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Utils.getErrorDialog(getActivity(), e.getMessage());
+                                }
+                            });
+                        }
+                    }
+                });
 
                 break;
             }
@@ -145,8 +236,43 @@ public class FormFragment extends Fragment {
 
                 if (!mOption.equals("new")) {
                     configStringField(stringField, false, DataModel.getLocation(mOption).getAddress());
+                    itemFeed = DataModel.getLocation(mOption).getInstrumentFeed();
+                    itemFeed.addAll(DataModel.getLocation(mOption).getReagentFeed());
+                    chargeRecycler(getActivity(), table, itemFeed);
                 }
 
+                saveBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String address = stringField.getText().toString();
+                        if (mOption.equals("new")) {
+                            DataModel.addWarehouse(address, false);
+                            DBManager.upsertLocation(DataModel.getWarehouse(address), new DBCallback<Boolean>() {
+                                @Override
+                                public void onSuccess(Boolean exists) {
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Utils.getErrorDialog(getActivity(), e.getMessage());
+                                }
+                            });
+                        } else {
+                            Warehouse location = (Warehouse) DataModel.getLocation(mOption);
+                            DataModel.updateWarehouse(location, address);
+                            DBManager.upsertLocation(location, new DBCallback<Boolean>() {
+                                @Override
+                                public void onSuccess(Boolean exists) {
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Utils.getErrorDialog(getActivity(), e.getMessage());
+                                }
+                            });
+                        }
+                    }
+                });
                 break;
             }
         }
@@ -160,6 +286,27 @@ public class FormFragment extends Fragment {
 
             }
         });
+
+        if (!DataModel.isAdmin(((MainActivity) getActivity()).getAccount())){
+            deleteBtn.setVisibility(View.INVISIBLE);
+        } else {
+            deleteBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Object obj = null;
+                    if (mScreen.equals("subjects")) {
+                        obj = DataModel.getSubject(mOption);
+                    } else if (mScreen.equals("laboratories")) {
+                        obj = DataModel.getLocation(mOption);
+                    } else if (mScreen.equals("warehouses")) {
+                        obj = DataModel.getLocation(mOption);
+                    }
+                    Utils.getDeleteDialog(getContext(), obj);
+                }
+            });
+        }
+
+
 
         return view;
     }
@@ -201,5 +348,14 @@ public class FormFragment extends Fragment {
 
     public String getmScreen() {
         return mScreen;
+    }
+
+    private void chargeRecycler(Context context, RecyclerView rV, ArrayList<ItemFeed> list) {
+
+        rV.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        FeedAdapter rVAdapter = new FeedAdapter(list);
+        rV.setAdapter(rVAdapter);
+
+        rVAdapter.notifyDataSetChanged();
     }
 }

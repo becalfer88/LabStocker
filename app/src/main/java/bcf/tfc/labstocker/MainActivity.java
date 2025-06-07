@@ -27,10 +27,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.LinkedList;
 
+import bcf.tfc.labstocker.adapters.ItemFeed;
 import bcf.tfc.labstocker.fragments.FormFragment;
 import bcf.tfc.labstocker.fragments.HomeFragment;
 import bcf.tfc.labstocker.fragments.OptionsFragment;
 import bcf.tfc.labstocker.fragments.ProfileFragment;
+import bcf.tfc.labstocker.fragments.SearchFragment;
+import bcf.tfc.labstocker.model.DBManager;
+import bcf.tfc.labstocker.model.DataModel;
+import bcf.tfc.labstocker.model.data.DBCallback;
+import bcf.tfc.labstocker.model.data.user.Account;
 import bcf.tfc.labstocker.utils.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -78,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
                 loadFragment(fragment);
             } else if (item.getItemId() == R.id.rss_btn) {
                 // Go to search
-/*                Fragment fragment = ExploreFragment.newInstance(userName, account);
-                this.loadFragment(fragment);*/
+                Fragment fragment = SearchFragment.newInstance(false);
+                this.loadFragment(fragment);
             } else if (item.getItemId() == R.id.places_btn) {
                 // Go to Warehouses/Labs options
                 Fragment fragment = OptionsFragment.newInstance("");
@@ -98,18 +104,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-/*
     @Override
     protected void onPause() {
         super.onPause();
         Account oAccount = DataModel.getAccount(account);
-        for (int i = 0; i < oAccount.getUsers().length; i++) {
-            if (oAccount.getUsers()[i] != null) {
-                DataBaseHelper.updateUser(this, oAccount.getUsers()[i]);
-            }
-        }
+        if(oAccount != null)
+            DBManager.upsertAccount(oAccount, new DBCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean result) {
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                }
+            });
     }
-*/
 
 
     /**
@@ -140,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.settings_btn) {
-            loggedCheck(false, "");
             Fragment fragment = ProfileFragment.newInstance(account);
             loadFragment(fragment);
             return true;
@@ -217,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 
 }
 

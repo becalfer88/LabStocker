@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bcf.tfc.labstocker.adapters.ItemFeed;
+import bcf.tfc.labstocker.model.DataModel;
+
 public class Location {
 
     private static int lastId = 0;
@@ -120,23 +123,52 @@ public class Location {
         List<Map<String, Object>> reagents = (List<Map<String, Object>>) map.get("reagents");
         if (reagents != null) {
             for (Map<String, Object> entry : reagents) {
-                Reagent r = Reagent.fromMap(entry);
+                Reagent r =  DataModel.getReagent((String) entry.get("id"));
                 Quantity q = Quantity.fromMap(entry);
                 location.reagents.put(r, q);
             }
         }
 
         location.labInstruments = new HashMap<>();
-        List<Map<String, Object>> instruments = (List<Map<String, Object>>) map.get("labInstruments");
+        List<Map<String, Object>> instruments = (List<Map<String, Object>>) map.get("instruments");
         if (instruments != null) {
             for (Map<String, Object> entry : instruments) {
-                LabInstrument i = LabInstrument.fromMap(entry);
+                LabInstrument i = DataModel.getLabInstrument((String) entry.get("id"));
                 Quantity q = Quantity.fromMap(entry);
                 location.labInstruments.put(i, q);
             }
         }
     }
 
+    protected HashMap<LabInstrument, Quantity> getLabInstruments() {
+        return labInstruments;
+    }
 
+    protected HashMap<Reagent, Quantity> getReagents() {
+        return reagents;
+    }
 
+    public void removeItem(String id) {
+        if (id.contains("I")){
+            this.getLabInstruments().remove(DataModel.getLabInstrument(id));
+        } else {
+            this.getReagents().remove(DataModel.getReagent(id));
+        }
+    }
+
+    public ArrayList<ItemFeed> getReagentFeed() {
+        ArrayList<ItemFeed> feed = new ArrayList<ItemFeed>();
+        for (Map.Entry<Reagent, Quantity> entry : this.reagents.entrySet()) {
+            feed.add(new ItemFeed(entry.getKey().getId(), entry.getKey().getFormula(), entry.getValue().toString(), this.id));
+        }
+        return feed;
+    }
+
+    public ArrayList<ItemFeed> getInstrumentFeed() {
+        ArrayList<ItemFeed> feed = new ArrayList<ItemFeed>();
+        for (Map.Entry<LabInstrument, Quantity> entry : this.labInstruments.entrySet()) {
+            feed.add(new ItemFeed(entry.getKey().getId(), entry.getKey().getName(), entry.getValue().toString(), this.id));
+        }
+        return feed;
+    }
 }
