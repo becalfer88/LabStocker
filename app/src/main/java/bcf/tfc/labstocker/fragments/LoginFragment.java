@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -96,9 +97,11 @@ public class LoginFragment extends Fragment {
                                     Utils.getErrorDialog(getActivity(), getString(R.string.impossible_check));
                                 }
                             });
-                        }
-                        if (validateForm(email, password)) {
-
+                        } else {
+                            AlertDialog dialog = getDialog(email);
+                            dialog.show();
+                            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(getContext(), R.color.secondaryDark));
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getContext(), R.color.primaryDark));
                         }
                     }
                     @Override

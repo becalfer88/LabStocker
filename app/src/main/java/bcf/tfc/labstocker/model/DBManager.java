@@ -1,17 +1,22 @@
 package bcf.tfc.labstocker.model;
 
+import android.widget.Toast;
+
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import bcf.tfc.labstocker.R;
 import bcf.tfc.labstocker.model.data.DBCallback;
 import bcf.tfc.labstocker.model.data.LabInstrument;
 import bcf.tfc.labstocker.model.data.Laboratory;
@@ -24,8 +29,15 @@ import bcf.tfc.labstocker.model.data.user.Account;
 
 public class DBManager {
 
+    public static DBCallback<Boolean> getSimpleBoolCallback() {
+        return new DBCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {}
 
-
+            @Override
+            public void onFailure(Exception e) {}
+        };
+    }
 
     // Account
     public static void upsertAccount(Account account, DBCallback<Boolean> cb) {
@@ -102,11 +114,32 @@ public class DBManager {
     // Subject
     public static void upsertSubject(Subject subject, DBCallback<Boolean> cb) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference subjectRef = db.document("subjects/" + subject.getId());
 
         db.document("subjects/" + subject.getId())
                 .set(subject.toMap())
                 .addOnSuccessListener(docRef -> {
-                    cb.onSuccess(true);
+                    List<Practice> practices = subject.getPractices();
+                    if (practices == null || practices.isEmpty()) {
+                        cb.onSuccess(true); // No practices, ends here
+                        return;
+                    }
+
+                    // Contador para saber cuándo ha terminado
+                    final int total = practices.size();
+                    final int[] successCount = {0};
+
+                    for (Practice p : practices) {
+                        subjectRef.collection("practices").document(p.getId())
+                                .set(p.toMap())
+                                .addOnSuccessListener(doc -> {
+                                    successCount[0]++;
+                                    if (successCount[0] == total) {
+                                        cb.onSuccess(true);
+                                    }
+                                })
+                                .addOnFailureListener(cb::onFailure);
+                    }
                 })
                 .addOnFailureListener(cb::onFailure);
     }
@@ -128,24 +161,26 @@ public class DBManager {
 
     public static void deleteSubject(String id, DBCallback<Boolean> cb) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference subjectRef = db.document("subjects/" + id);
 
-        db.document("subjects/" + id)
-                .delete()
-                .addOnSuccessListener(docRef -> {
-                    cb.onSuccess(true);
-                })
-                .addOnFailureListener(cb::onFailure);
-    }
+        // Primero borra la subcolección de prácticas
+        subjectRef.collection("practices")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    WriteBatch batch = db.batch();
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        batch.delete(doc.getReference());
+                    }
 
-    // Practices TODO
-    public static void upsertPractice(Subject subject, Practice practice, DBCallback<Boolean> cb) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Map<String, Object> newPractice = subject.getPractice(practice.getId()).toMap();
-
-        db.document("subjects/" + subject.getId() + "/practices/" + practice.getId())
-                .set(newPractice)
-                .addOnSuccessListener(docRef -> {
-                    cb.onSuccess(true);
+                    // Aplica el borrado de las prácticas
+                    batch.commit()
+                            .addOnSuccessListener(aVoid -> {
+                                // Ahora borra el documento Subject
+                                subjectRef.delete()
+                                        .addOnSuccessListener(aVoid2 -> cb.onSuccess(true))
+                                        .addOnFailureListener(cb::onFailure);
+                            })
+                            .addOnFailureListener(cb::onFailure);
                 })
                 .addOnFailureListener(cb::onFailure);
     }
@@ -227,26 +262,43 @@ public class DBManager {
                 .addOnFailureListener(cb::onFailure);
     }
 
+    public static void transferResources(Location source, Location destination, DBCallback<Boolean> cb) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        WriteBatch batch = db.batch();
+
+        String sourcePath = (source instanceof Warehouse) ? "warehouses/W" : "laboratories/L";
+        String destinationPath = (destination instanceof Warehouse) ? "warehouses/W" : "laboratories/L";
+
+        DocumentReference sourceRef = db.document(sourcePath + source.getId());
+        DocumentReference destinationRef = db.document(destinationPath + destination.getId());
+
+        batch.set(sourceRef, source.toMap());
+        batch.set(destinationRef, destination.toMap());
+
+        batch.commit()
+                .addOnSuccessListener(aVoid -> {
+                    cb.onSuccess(true);
+                })
+                .addOnFailureListener(cb::onFailure);
+    }
+
+
     // Locations
     public static void upsertLocation(Location location, DBCallback<Boolean> cb) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Map<String, Object> newLocation = location.toMap();
 
-        if (location instanceof Warehouse) {
-            db.document("warehouses")
-                    .update("w" + location.getId(), newLocation)
-                    .addOnSuccessListener(docRef -> {
-                        cb.onSuccess(true);
-                    })
-                    .addOnFailureListener(cb::onFailure);
-        } else {
-            db.document("laboratories")
-                    .update("l" + location.getId(), newLocation)
-                    .addOnSuccessListener(docRef -> {
-                        cb.onSuccess(true);
-                    })
-                    .addOnFailureListener(cb::onFailure);
-        }
+        String collection = (location instanceof Warehouse) ? "warehouses" : "laboratories";
+        String id = (location instanceof Warehouse) ? "W" : "L";
+
+        db.collection(collection)
+                .document(id + location.getId())
+                .set(newLocation)
+                .addOnSuccessListener(docRef -> {
+                    cb.onSuccess(true);
+                })
+                .addOnFailureListener(cb::onFailure);
+
     }
 
     public static void getLabs(DBCallback<List<Laboratory>> cb) {

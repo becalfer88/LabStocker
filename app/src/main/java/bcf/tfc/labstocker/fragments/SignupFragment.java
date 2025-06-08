@@ -3,6 +3,8 @@ package bcf.tfc.labstocker.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -83,7 +85,9 @@ public class SignupFragment extends Fragment {
                                 saveAccount(email, password);
                             }
                         } else {
-                            Utils.getErrorDialog(getActivity(), getString(R.string.account_exists));
+                            AlertDialog dialog = Utils.getErrorDialog(getActivity(), getString(R.string.account_exists));
+                            dialog.show();
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getContext(), R.color.primaryDark));
                         }
                     }
 

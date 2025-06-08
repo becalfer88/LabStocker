@@ -5,32 +5,32 @@
 
     <item
         android:id="@+id/subjects_btn"
-        android:icon="@android:drawable/ic_input_get"
+        android:icon="@drawable/subjects"
         android:title="@string/subjects"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/rss_btn"
-        android:icon="?android:attr/actionModeWebSearchDrawable"
+        android:icon="@drawable/search"
         android:title="@string/resources"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/home_btn"
         android:checked="true"
-        android:icon="@drawable/home_resized"
+        android:icon="@drawable/options"
         android:title="@string/home"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/calendar_btn"
-        android:icon="@android:drawable/ic_menu_today"
+        android:icon="@drawable/calendar_2229152"
         android:title="@string/calendar"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/places_btn"
-        android:icon="@android:drawable/ic_dialog_map"
+        android:icon="@drawable/places"
         android:title="@string/places"
         app:showAsAction="always" />
 

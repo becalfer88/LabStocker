@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -112,7 +113,10 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Create and show an Editable AlertDialog.
-                getEditableDialog(activity, name).show();
+                AlertDialog dialog = getEditableDialog(activity, name);
+                dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(v.getContext(), R.color.secondaryDark));
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(v.getContext(), R.color.primaryDark));
             }
         });
 

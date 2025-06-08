@@ -1,16 +1,16 @@
 package bcf.tfc.labstocker.adapters;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -18,13 +18,13 @@ import java.util.List;
 import bcf.tfc.labstocker.MainActivity;
 import bcf.tfc.labstocker.R;
 import bcf.tfc.labstocker.UnderConstructionActivity;
-import bcf.tfc.labstocker.fragments.ItemFormFragment;
-import bcf.tfc.labstocker.fragments.OptionsFragment;
+import bcf.tfc.labstocker.fragments.FormFragment;
 import bcf.tfc.labstocker.utils.Utils;
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder> {
 
     private List<ItemFeed> feedList;
+    private Context context;
 
     public FeedAdapter(List<ItemFeed> feedList) {
         this.feedList = feedList;
@@ -43,6 +43,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
     @Override
     public void onBindViewHolder(@NonNull FeedViewHolder holder, int position) {
         holder.bind(feedList.get(position));
+        context = holder.itemView.getContext();
     }
 
     @Override
@@ -80,11 +81,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
             editItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), UnderConstructionActivity.class);
-                    (v.getContext()).startActivity(intent);
-                    /*String mScreen = ((OptionsFragment) v.getParent().getParent()).getmScreen();
-                    Fragment fragment = ItemFormFragment.newInstance(mScreen,feed.getId());
-                    ((MainActivity) v.getContext()).loadFragment(fragment);*/
+
+                    if (feed. getParentType() != null &&feed.getParentType().equals("Subject")){
+                        FormFragment fragment = FormFragment.newInstance("practices", feed.getId(), feed.getIdParent());
+                        ((MainActivity) context).loadFragment(fragment);
+                    } else {
+                        Intent intent = new Intent(v.getContext(), UnderConstructionActivity.class);
+                        (v.getContext()).startActivity(intent);
+                    }
                 }
             });
 
@@ -97,6 +101,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                     public void onClick(View v) {
                         AlertDialog dialog = Utils.getDeleteDialog(v.getContext(), feed);
                         dialog.show();
+                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(v.getContext(), R.color.secondaryDark));
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(v.getContext(), R.color.primaryDark));
                     }
                 });
             }

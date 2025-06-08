@@ -4,14 +4,16 @@
 
     <item
         android:id="@+id/settings_btn"
-        android:icon="@drawable/user_128"
+        android:icon="@drawable/edit_profile"
         android:title="@string/settings"
+        android:iconTint="@color/primaryDark"
         app:showAsAction="always" />
     <item
         android:id="@+id/logout_btn"
-        android:icon="@android:drawable/ic_lock_power_off"
+        android:icon="@drawable/power"
         android:title="@string/log_out"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        android:iconTint="@color/primaryDark"/>
 
 
 </menu>

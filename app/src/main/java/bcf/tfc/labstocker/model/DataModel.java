@@ -1,6 +1,8 @@
 package bcf.tfc.labstocker.model;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import bcf.tfc.labstocker.R;
 import bcf.tfc.labstocker.model.data.DBCallback;
 import bcf.tfc.labstocker.model.data.user.Account;
 import bcf.tfc.labstocker.model.data.user.AccountType;
@@ -233,12 +236,12 @@ public class DataModel {
         return null;
     }
 
-    public static void deleteSubject(Subject subject) {
+    public static void deleteSubject(Context context, Subject subject) {
         subjects.remove(subject);
         DBManager.deleteSubject(subject.getId(), new DBCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
-                Log.i("Subject", "Subject deleted");
+                Toast.makeText(context, R.string.deleted, Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onFailure(Exception e) {
@@ -279,6 +282,15 @@ public class DataModel {
             }
         }
         return null;
+    }
+
+    public static void updatePractice(String id, String name, Subject subject) {
+        if (id.equals("new")) {
+            addPractice(name, subject);
+        } else {
+            Practice practice = getPractice(id);
+            practice.setName(name);
+        }
     }
 
     public static Practice getPractice(String name, Subject subject) {
@@ -481,7 +493,6 @@ public class DataModel {
                 Log.e("Error", e.getMessage());
             }
         });
-
     }
 
     public static boolean isAdmin(String email) {
@@ -489,13 +500,34 @@ public class DataModel {
         return account != null && account.isAdmin();
     }
 
-    public static void removeItem(Object parent, String id) {
+    public static void removeItem(Context context, Object parent, String id) {
         if (parent instanceof Practice) {
             ((Practice) parent).removeItem(id);
+            // Don't delete from DB due to test purposes
         } else if (parent instanceof Location) {
             ((Location) parent).removeItem(id);
+            DBManager.upsertLocation((Location) parent, new DBCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean result) {
+                    Toast.makeText(context, R.string.saved, Toast.LENGTH_SHORT).show();
+                }
+                @Override
+                public void onFailure(Exception e) {
+                    // Do nothing
+                }
+            });
         } else if (parent instanceof Subject) {
             ((Subject) parent).removeItem(id);
+            DBManager.upsertSubject((Subject) parent, new DBCallback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean result) {
+                    Toast.makeText(context, R.string.saved, Toast.LENGTH_SHORT).show();
+                }
+                @Override
+                public void onFailure(Exception e) {
+                    // Do nothing
+                }
+            });
         }
     }
 }

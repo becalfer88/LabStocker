@@ -46,15 +46,16 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_margin="15dp"
-
         android:text="@string/log_in"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.154"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password"
-        app:layout_constraintVertical_bias="0.085" />
+        app:layout_constraintVertical_bias="0.085"
+        app:backgroundTint="@null"
+        android:background="@drawable/primary_btn"/>
 
     <TextView
         android:id="@+id/forgotten_password"
@@ -83,7 +84,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/action_login"
-        app:layout_constraintVertical_bias="0.148" />
+        app:layout_constraintVertical_bias="0.148"
+        app:backgroundTint="@null"
+        android:backgroundTint="@color/secondaryColor"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import bcf.tfc.labstocker.adapters.ItemFeed;
+import bcf.tfc.labstocker.adapters.SimpleItem;
 import bcf.tfc.labstocker.model.DataModel;
 
 public class Location {
@@ -21,6 +22,7 @@ public class Location {
      * Empty constructor for Firebase
      */
     public Location() {
+        lastId++;
         this.labInstruments = new HashMap<>();
         this.reagents = new HashMap<>();
     }
@@ -61,6 +63,14 @@ public class Location {
         this.reagents.put(reagent, new Quantity(value, unit));
     }
 
+    public void updateReagent(Reagent reagent, float value, String unit) {
+        this.reagents.put(reagent, new Quantity(value, unit));
+    }
+
+    public void removeReagent(Reagent reagent) {
+        this.reagents.remove(reagent);
+    }
+
     public Reagent getReagent(String formula) {
         for (Reagent reagent : this.reagents.keySet()) {
             if (reagent.getFormula().equals(formula)) {
@@ -76,6 +86,14 @@ public class Location {
 
     public void addLabInstrument(LabInstrument labInstrument, float value, String unit) {
         this.labInstruments.put(labInstrument, new Quantity(value, unit));
+    }
+
+    public void updateLabInstrument(LabInstrument labInstrument, float value, String unit) {
+        this.labInstruments.put(labInstrument, new Quantity(value, unit));
+    }
+
+    public void removeLabInstrument(LabInstrument labInstrument) {
+        this.labInstruments.remove(labInstrument);
     }
 
     public LabInstrument getLabInstrument(String name) {
@@ -159,7 +177,7 @@ public class Location {
     public ArrayList<ItemFeed> getReagentFeed() {
         ArrayList<ItemFeed> feed = new ArrayList<ItemFeed>();
         for (Map.Entry<Reagent, Quantity> entry : this.reagents.entrySet()) {
-            feed.add(new ItemFeed(entry.getKey().getId(), entry.getKey().getFormula(), entry.getValue().toString(), this.id));
+            feed.add(new ItemFeed(entry.getKey().getId(), entry.getKey().getFormula(), entry.getValue().toString(), this.id ,this.getClass().getSimpleName(), null));
         }
         return feed;
     }
@@ -167,7 +185,30 @@ public class Location {
     public ArrayList<ItemFeed> getInstrumentFeed() {
         ArrayList<ItemFeed> feed = new ArrayList<ItemFeed>();
         for (Map.Entry<LabInstrument, Quantity> entry : this.labInstruments.entrySet()) {
-            feed.add(new ItemFeed(entry.getKey().getId(), entry.getKey().getName(), entry.getValue().toString(), this.id));
+            feed.add(new ItemFeed(entry.getKey().getId(), entry.getKey().getName(), entry.getValue().toString(), this.id ,this.getClass().getSimpleName(), null));
+        }
+        return feed;
+    }
+
+    public ArrayList<SimpleItem> search(String query) {
+        ArrayList<SimpleItem> feed = new ArrayList<>();
+        String name;
+        String description;
+
+        for (Map.Entry<Reagent, Quantity> entry : this.reagents.entrySet()) {
+            name = entry.getKey().getFormula();
+            description = entry.getKey().getDescription();
+            if (name.toLowerCase().contains(query.toLowerCase()) || (description != null && description.toLowerCase().contains(query.toLowerCase()))) {
+                feed.add(new SimpleItem(entry.getKey().getId(), entry.getKey().getFormula(), true));
+            }
+        }
+
+        for (Map.Entry<LabInstrument, Quantity> entry : this.labInstruments.entrySet()) {
+            name = entry.getKey().getName();
+            description = entry.getKey().getObservations();
+            if (name.toLowerCase().contains(query.toLowerCase()) || (description != null && description.toLowerCase().contains(query.toLowerCase())))  {
+                feed.add(new SimpleItem(entry.getKey().getId(), entry.getKey().getName(), false));
+            }
         }
         return feed;
     }

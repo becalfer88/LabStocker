@@ -1,5 +1,7 @@
 package bcf.tfc.labstocker.model.data;
 
+import androidx.annotation.NonNull;
+
 import java.util.Map;
 
 

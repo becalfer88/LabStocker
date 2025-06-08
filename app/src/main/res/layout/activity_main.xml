@@ -32,7 +32,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:menu="@menu/user_bottom_menu">
+        app:menu="@menu/user_bottom_menu"
+        app:itemIconTint="@color/primaryDark"
+        app:itemTextColor="@color/primaryDark"
+        app:itemRippleColor="@color/primaryColor">
 
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>

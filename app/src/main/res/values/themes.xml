@@ -3,6 +3,7 @@
     <style name="Base.Theme.LabStocker" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="fontFamily">@font/monserrat</item>
     </style>
 
     <style name="Theme.LabStocker" parent="Base.Theme.LabStocker" />

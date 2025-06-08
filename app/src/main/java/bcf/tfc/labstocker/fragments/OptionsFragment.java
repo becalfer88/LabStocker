@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -104,7 +105,7 @@ public class OptionsFragment extends Fragment {
         newButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment = FormFragment.newInstance(mScreen, "new");
+                Fragment fragment = FormFragment.newInstance(mScreen, "new", null);
                 ((MainActivity) getActivity()).loadFragment(fragment);
             }
         });
@@ -120,6 +121,7 @@ public class OptionsFragment extends Fragment {
                     }
                 });
                 dialog.show();
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(v.getContext(), R.color.primaryDark));
             }
         });
         // Inflate the layout for this fragment
@@ -205,7 +207,7 @@ public class OptionsFragment extends Fragment {
                         break;
                     }
                 }
-                Fragment fragment = FormFragment.newInstance(mScreen, option);
+                Fragment fragment = FormFragment.newInstance(mScreen, option, null);
                 ((MainActivity) getActivity()).loadFragment(fragment);
             }
         });

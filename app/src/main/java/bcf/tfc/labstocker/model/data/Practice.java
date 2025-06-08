@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bcf.tfc.labstocker.adapters.ItemFeed;
 import bcf.tfc.labstocker.model.DataModel;
 import bcf.tfc.labstocker.utils.Utils;
 
@@ -162,5 +163,21 @@ public class Practice {
         } else {
             this.reagents.remove(DataModel.getReagent(id));
         }
+    }
+
+    public ArrayList<ItemFeed> getReagentFeed(Subject subject) {
+        ArrayList<ItemFeed> feed = new ArrayList<ItemFeed>();
+        for (Map.Entry<Reagent, Quantity> entry : this.reagents.entrySet()) {
+            feed.add(new ItemFeed(entry.getKey().getId(), entry.getKey().getFormula(), entry.getValue().toString(), this.id ,this.getClass().getSimpleName(), subject));
+        }
+        return feed;
+    }
+
+    public ArrayList<ItemFeed> getInstrumentFeed(Subject subject) {
+        ArrayList<ItemFeed> feed = new ArrayList<ItemFeed>();
+        for (Map.Entry<LabInstrument, Quantity> entry : this.labInstruments.entrySet()) {
+            feed.add(new ItemFeed(entry.getKey().getId(), entry.getKey().getName(), entry.getValue().toString(), this.id ,this.getClass().getSimpleName(), subject));
+        }
+        return feed;
     }
 }

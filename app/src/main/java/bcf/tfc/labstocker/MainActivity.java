@@ -3,6 +3,7 @@ package bcf.tfc.labstocker;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -60,13 +61,14 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Intent receivedIntent = getIntent();
         account = receivedIntent.getStringExtra(ACCOUNT_TEXT);
 
         // Top navigation
         userTopBar = findViewById(R.id.user_top_menu);
-        /*userTopBar.setLogo(R.drawable.atomic); // Logo
+        userTopBar.setLogo(R.drawable.nombre_edit); // Logo
         userTopBar.setTitle(""); // Title*/
         setSupportActionBar(userTopBar);
 

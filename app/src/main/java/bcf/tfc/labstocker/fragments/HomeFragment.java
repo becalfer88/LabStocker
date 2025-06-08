@@ -69,6 +69,14 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        moveItemBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MoveRssFragment fragment = new MoveRssFragment();
+                ((MainActivity)getActivity()).loadFragment(fragment);
+            }
+        });
+
         return view;
     }
 }

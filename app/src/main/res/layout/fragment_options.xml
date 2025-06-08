@@ -22,52 +22,62 @@
 
     <Button
         android:id="@+id/new_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:text="@string/new_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.332" />
+        app:layout_constraintVertical_bias="0.332"
+        app:backgroundTint="@null"
+        android:background="@drawable/primary_btn"
+        android:textSize="26sp"/>
 
     <Button
         android:id="@+id/edit_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:text="@string/edit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/new_btn"
-        app:layout_constraintVertical_bias="0.197" />
+        app:layout_constraintVertical_bias="0.197"
+        app:backgroundTint="@null"
+        android:background="@drawable/primary_btn"
+        android:textSize="26sp"/>
 
-    <ToggleButton
-        android:id="@+id/warehouse_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textOff="@string/warehouse"
-        android:textOn="@string/warehouse"
+    <LinearLayout
+        android:id="@+id/buttonPanel"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         app:layout_constraintBottom_toTopOf="@+id/new_btn"
-        app:layout_constraintEnd_toStartOf="@+id/laboratory_btn"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.284" />
+        app:layout_constraintVertical_bias="0.39"
+        android:gravity="center_horizontal">
 
-    <ToggleButton
-        android:id="@+id/laboratory_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="112dp"
-        android:checked="true"
-        android:textOff="@string/laboratory"
-        android:textOn="@string/laboratory"
-        app:layout_constraintBottom_toTopOf="@+id/new_btn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.774"
-        app:layout_constraintStart_toEndOf="@+id/title"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.284" />
+        <ToggleButton
+            android:id="@+id/warehouse_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:textOff="@string/warehouse"
+            android:textOn="@string/warehouse"
+            android:textSize="20sp" />
+
+        <ToggleButton
+            android:id="@+id/laboratory_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:padding="15dp"
+            android:textOff="@string/laboratory"
+            android:textOn="@string/laboratory"
+            android:textSize="20sp" />
+
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

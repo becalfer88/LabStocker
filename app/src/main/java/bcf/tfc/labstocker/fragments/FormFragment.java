@@ -1,15 +1,15 @@
 package bcf.tfc.labstocker.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +18,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.ToggleButton;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import bcf.tfc.labstocker.MainActivity;
 import bcf.tfc.labstocker.R;
+import bcf.tfc.labstocker.UnderConstructionActivity;
 import bcf.tfc.labstocker.adapters.FeedAdapter;
 import bcf.tfc.labstocker.adapters.ItemFeed;
 import bcf.tfc.labstocker.model.DBManager;
@@ -43,13 +43,14 @@ import bcf.tfc.labstocker.utils.Utils;
  */
 public class FormFragment extends Fragment {
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_SCREEN = "screen";
     private static final String ARG_OPTION = "option";
+    private static final String ARG_SUBJECT = "subject";
 
 
     private String mScreen;
     private String mOption;
+    private String mSubject;
 
     private static ArrayList<View> formComponents = new ArrayList<>();
     private boolean editable = true;
@@ -67,11 +68,12 @@ public class FormFragment extends Fragment {
      * @param option Parameter 2.
      * @return A new instance of fragment FormFragment.
      */
-    public static FormFragment newInstance(String screen, String option) {
+    public static FormFragment newInstance(String screen, String option, String subject) {
         FormFragment fragment = new FormFragment();
         Bundle args = new Bundle();
         args.putString(ARG_SCREEN, screen);
         args.putString(ARG_OPTION, option);
+        args.putString(ARG_SUBJECT, subject);
         fragment.setArguments(args);
         return fragment;
     }
@@ -82,6 +84,7 @@ public class FormFragment extends Fragment {
         if (getArguments() != null) {
             mScreen = getArguments().getString(ARG_SCREEN);
             mOption = getArguments().getString(ARG_OPTION);
+            mSubject = getArguments().getString(ARG_SUBJECT);
         }
     }
 
@@ -105,15 +108,22 @@ public class FormFragment extends Fragment {
         RecyclerView table = view.findViewById(R.id.table_list);
         Button saveBtn = view.findViewById(R.id.save_btn);
         TextView practicesText = view.findViewById(R.id.practices_text);
-        ToggleButton instrumentsBtn = view.findViewById(R.id.instruments_btn);
-        ToggleButton reagentsBtn = view.findViewById(R.id.reagents_btn);
         Button addBtn = view.findViewById(R.id.add_btn);
+
+
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), UnderConstructionActivity.class);
+                startActivity(intent);
+            }
+        });
 
         switch (mScreen) {
             case "subjects": {
                 title.setText(R.string.subjects);
                 stringText.setText(R.string.subject);
-                formComponents = configSubjects(spinnerText, spinnerField, yearText, yearField, semesterText, semesterField,practicesText);
+                formComponents = configSubjects(spinnerText, spinnerField, yearText, yearField, semesterText, semesterField, practicesText);
                 Utils.setVisibility(formComponents);
                 String[] careers = DataModel.getAllCareers().toArray(new String[0]);
                 ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, careers);
@@ -133,38 +143,7 @@ public class FormFragment extends Fragment {
                 saveBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        String name = stringField.getText().toString();
-                        String career = spinnerField.getSelectedItem().toString();
-                        int year = Integer.parseInt(yearField.getText().toString());
-                        int semester = Integer.parseInt(semesterField.getText().toString());
-
-
-                        if (mOption.equals("new")) {
-                            DataModel.addSubject(null, name, career, year, semester);
-                            DBManager.upsertSubject(DataModel.getSubject(name, career), new DBCallback<Boolean>() {
-                                @Override
-                                public void onSuccess(Boolean exists) {
-                                }
-
-                                @Override
-                                public void onFailure(Exception e) {
-                                    Utils.getErrorDialog(getActivity(), e.getMessage());
-                                }
-                            });
-                        } else {
-                            Subject subject = DataModel.getSubject(mOption);
-                            DataModel.updateSubject(subject, name, career, year, semester);
-                            DBManager.upsertSubject(subject, new DBCallback<Boolean>() {
-                                @Override
-                                public void onSuccess(Boolean exists) {
-                                }
-
-                                @Override
-                                public void onFailure(Exception e) {
-                                    Utils.getErrorDialog(getActivity(), e.getMessage());
-                                }
-                            });
-                        }
+                        saveSubject(stringField, spinnerField, yearField, semesterField);
                     }
                 });
                 break;
@@ -172,7 +151,7 @@ public class FormFragment extends Fragment {
             case "laboratories": {
                 title.setText(R.string.laboratories);
                 stringText.setText(R.string.address);
-                formComponents = configLabs(spinnerText,spinnerField, instrumentsBtn,reagentsBtn);
+                formComponents = configLabs(spinnerText, spinnerField);
                 Utils.setVisibility(formComponents);
                 ArrayList<Location> warehousesList = DataModel.getLocations("warehouses");
                 String[] warehouses = new String[warehousesList.size()];
@@ -195,44 +174,14 @@ public class FormFragment extends Fragment {
                 saveBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        String address = stringField.getText().toString();
-                        String warehouse = spinnerField.getSelectedItem().toString();
-
-                        if (mOption.equals("new")) {
-                            DataModel.addLaboratory( address, DataModel.getWarehouse(warehouse),false);
-                            DBManager.upsertLocation(DataModel.getLaboratory(address), new DBCallback<Boolean>() {
-                                @Override
-                                public void onSuccess(Boolean exists) {
-                                }
-
-                                @Override
-                                public void onFailure(Exception e) {
-                                    Utils.getErrorDialog(getActivity(), e.getMessage());
-                                }
-                            });
-                        } else {
-                            Laboratory location = (Laboratory) DataModel.getLocation(mOption);
-                            DataModel.updateLaboratory(location, address, warehouse);
-                            DBManager.upsertLocation(location, new DBCallback<Boolean>() {
-                                @Override
-                                public void onSuccess(Boolean exists) {
-                                }
-
-                                @Override
-                                public void onFailure(Exception e) {
-                                    Utils.getErrorDialog(getActivity(), e.getMessage());
-                                }
-                            });
-                        }
+                        saveLaboratory(stringField, spinnerField);
                     }
                 });
-
                 break;
             }
             case "warehouses": {
                 title.setText(R.string.warehouses);
                 stringText.setText(R.string.address);
-                ((MainActivity) getActivity()).configToggleButtons(this, instrumentsBtn, reagentsBtn);
 
                 if (!mOption.equals("new")) {
                     configStringField(stringField, false, DataModel.getLocation(mOption).getAddress());
@@ -244,71 +193,189 @@ public class FormFragment extends Fragment {
                 saveBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        String address = stringField.getText().toString();
-                        if (mOption.equals("new")) {
-                            DataModel.addWarehouse(address, false);
-                            DBManager.upsertLocation(DataModel.getWarehouse(address), new DBCallback<Boolean>() {
-                                @Override
-                                public void onSuccess(Boolean exists) {
-                                }
-
-                                @Override
-                                public void onFailure(Exception e) {
-                                    Utils.getErrorDialog(getActivity(), e.getMessage());
-                                }
-                            });
-                        } else {
-                            Warehouse location = (Warehouse) DataModel.getLocation(mOption);
-                            DataModel.updateWarehouse(location, address);
-                            DBManager.upsertLocation(location, new DBCallback<Boolean>() {
-                                @Override
-                                public void onSuccess(Boolean exists) {
-                                }
-
-                                @Override
-                                public void onFailure(Exception e) {
-                                    Utils.getErrorDialog(getActivity(), e.getMessage());
-                                }
-                            });
-                        }
+                        saveWarehouse(stringField);
+                    }
+                });
+                break;
+            }
+            case "practices": {
+                title.setText(R.string.practices);
+                stringText.setText(R.string.practice);
+                if (!mOption.equals("new")) {
+                    configStringField(stringField, false, DataModel.getPractice(mOption).getName());
+                    itemFeed = DataModel.getPractice(mOption).getInstrumentFeed(DataModel.getSubject(mSubject));
+                    itemFeed.addAll(DataModel.getPractice(mOption).getReagentFeed(DataModel.getSubject(mSubject)));
+                    chargeRecycler(getActivity(), table, itemFeed);
+                }
+                saveBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        savePractice(stringField);
                     }
                 });
                 break;
             }
         }
 
-        editBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                configStringField(stringField, !editable, stringField.getText().toString());
-                Utils.setEditable(formComponents, editable);
+        if (mOption.equals("new")) {
+            editBtn.setVisibility(View.INVISIBLE);
+        } else{
+            editBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    configStringField(stringField, !editable, stringField.getText().toString());
+                    Utils.setEditable(formComponents, editable);
+                    if (editable) {
+                        editBtn.setBackgroundResource(R.drawable.create_8860653);
+                    } else {
+                        editBtn.setBackgroundResource( R.drawable.edit);
+                    }
 
+                }
+            });
+        }
 
-            }
-        });
-
-        if (!DataModel.isAdmin(((MainActivity) getActivity()).getAccount())){
+        if (!DataModel.isAdmin(((MainActivity) getActivity()).getAccount())
+        || (!mScreen.equals("subjects") && !mScreen.equals("practices"))){
             deleteBtn.setVisibility(View.INVISIBLE);
         } else {
             deleteBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Object obj = null;
-                    if (mScreen.equals("subjects")) {
-                        obj = DataModel.getSubject(mOption);
-                    } else if (mScreen.equals("laboratories")) {
-                        obj = DataModel.getLocation(mOption);
-                    } else if (mScreen.equals("warehouses")) {
-                        obj = DataModel.getLocation(mOption);
+
+                    if (mScreen.equals("practices")) {
+                        Intent intent = new Intent(getContext(), UnderConstructionActivity.class);
+                        (getContext()).startActivity(intent);
+                    } else {
+                        Subject subj = DataModel.getSubject(mOption);
+
+                        AlertDialog dialog = Utils.getDeleteDialog(getContext(), subj);
+                        dialog.show();
+                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(v.getContext(), R.color.secondaryDark));
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(v.getContext(), R.color.primaryDark));
                     }
-                    Utils.getDeleteDialog(getContext(), obj);
                 }
             });
         }
 
-
-
         return view;
+    }
+
+
+
+    // GETTERS AND SETTERS
+    public void setmScreen(String mScreen) {
+        this.mScreen = mScreen;
+    }
+
+    public String getmScreen() {
+        return mScreen;
+    }
+
+    // SAVES
+    private void saveSubject(EditText stringField, Spinner spinnerField, EditText yearField, EditText semesterField) {
+        String name = stringField.getText().toString();
+        String career = spinnerField.getSelectedItem().toString();
+        int year = Integer.parseInt(yearField.getText().toString());
+        int semester = Integer.parseInt(semesterField.getText().toString());
+
+        Subject subject;
+        if (mOption.equals("new")) {
+            DataModel.addSubject(null, name, career, year, semester);
+            subject = DataModel.getSubject(name,career);
+        } else {
+            subject = DataModel.getSubject(mOption);
+            DataModel.updateSubject(subject, name, career, year, semester);
+        }
+
+        DBManager.upsertSubject(subject, new DBCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean exists) {
+                Toast.makeText(getContext(), getString(R.string.saved), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                showError();
+            }
+        });
+    }
+
+    private void saveLaboratory(EditText stringField, Spinner spinnerField) {
+        String address = stringField.getText().toString();
+        String warehouse = spinnerField.getSelectedItem().toString();
+
+        Location location;
+        if (mOption.equals("new")) {
+            DataModel.addLaboratory(address, DataModel.getWarehouse(warehouse), false);
+            location = DataModel.getLaboratory(address);
+        } else {
+            location = DataModel.getLocation(mOption);
+            DataModel.updateLaboratory((Laboratory) location, address, warehouse);
+        }
+        DBManager.upsertLocation(location, new DBCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean exists) {
+                Toast.makeText(getContext(), getString(R.string.saved), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                showError();
+            }
+        });
+    }
+
+    private void saveWarehouse(EditText stringField) {
+        String address = stringField.getText().toString();
+        Location location;
+        if (mOption.equals("new")) {
+            DataModel.addWarehouse(address, false);
+            location = DataModel.getWarehouse(address);
+        } else {
+            location = (Warehouse) DataModel.getLocation(mOption);
+            DataModel.updateWarehouse((Warehouse) location, address);
+        }
+        DBManager.upsertLocation(location, new DBCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean exists) {
+                Toast.makeText(getContext(), getString(R.string.saved), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                showError();
+            }
+        });
+    }
+
+    private void savePractice(EditText stringField) {
+        String name = stringField.getText().toString();
+
+        Subject subject = DataModel.getSubject(mSubject);
+        if (mOption.equals("new")) {
+            DataModel.addPractice(name, subject);
+        } else {
+            DataModel.updatePractice(mOption, name, subject);
+        }
+        DBManager.upsertSubject(subject, new DBCallback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean exists) {
+                Toast.makeText(getContext(), getString(R.string.saved), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                showError();
+            }
+        });
+    }
+
+    // OTHER METHODS
+    private void showError() {
+        AlertDialog dialog = Utils.getErrorDialog(getActivity(),  getString(R.string.error));
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getContext(), R.color.primaryDark));
     }
 
     private void configStringField(EditText stringField, Boolean editable, String text) {
@@ -331,24 +398,14 @@ public class FormFragment extends Fragment {
         return formComponents;
     }
 
-    private ArrayList<View> configLabs(TextView spinnerText, Spinner spinnerField, ToggleButton instrumentsBtn, ToggleButton reagentsBtn) {
+    private ArrayList<View> configLabs(TextView spinnerText, Spinner spinnerField) {
         ArrayList<View> formComponents = new ArrayList<>();
         formComponents.add(spinnerText);
         spinnerText.setText(R.string.warehouse);
         formComponents.add(spinnerField);
-        formComponents.add(instrumentsBtn);
-        formComponents.add(reagentsBtn);
-        ((MainActivity) getActivity()).configToggleButtons(this, instrumentsBtn, reagentsBtn);
         return formComponents;
     }
 
-    public void setmScreen(String mScreen) {
-        this.mScreen = mScreen;
-    }
-
-    public String getmScreen() {
-        return mScreen;
-    }
 
     private void chargeRecycler(Context context, RecyclerView rV, ArrayList<ItemFeed> list) {
 

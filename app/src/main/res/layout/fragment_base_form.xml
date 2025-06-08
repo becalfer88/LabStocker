@@ -9,10 +9,12 @@
 
     <Button
         android:id="@+id/edit_btn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="16dp"
-        android:background="@android:drawable/ic_menu_edit"
+        android:background="@drawable/edit"
+        app:backgroundTint="@null"
+        android:backgroundTint="@color/primaryDark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,10 +22,12 @@
 
     <Button
         android:id="@+id/delete_btn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="16dp"
-        android:background="@android:drawable/ic_menu_delete"
+        android:background="@drawable/trash"
+        app:backgroundTint="@null"
+        android:backgroundTint="@color/primaryDark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/edit_btn"
         app:layout_constraintTop_toTopOf="parent"
@@ -40,7 +44,8 @@
         app:layout_constraintStart_toEndOf="@+id/delete_btn"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.053"
-        android:textSize="30sp"/>
+        android:textSize="30sp"
+        android:textColor="@color/black"/>
 
     <TextView
         android:id="@+id/string_content"
@@ -52,7 +57,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/delete_btn"
         app:layout_constraintVertical_bias="0.731"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:textColor="@color/black"/>
 
     <EditText
         android:id="@+id/string_field"
@@ -75,7 +81,8 @@
         app:layout_constraintTop_toBottomOf="@+id/string_field"
         app:layout_constraintVertical_bias="0.545"
         android:textSize="18sp"
-        android:visibility="invisible"/>
+        android:visibility="invisible"
+        android:textColor="@color/black"/>
 
     <Spinner
         android:id="@+id/spinner_field"
@@ -99,7 +106,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner_field"
         android:visibility="invisible"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:textColor="@color/black"/>
 
     <EditText
         android:id="@+id/year_field"
@@ -123,7 +131,8 @@
         app:layout_constraintEnd_toStartOf="@+id/semester_field"
         app:layout_constraintTop_toBottomOf="@+id/spinner_field"
         android:visibility="invisible"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:textColor="@color/black"/>
 
     <EditText
         android:id="@+id/semester_field"
@@ -140,12 +149,13 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/table_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="130dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/save_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/save_btn"
@@ -155,7 +165,9 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:backgroundTint="@null"
+        android:backgroundTint="@color/primaryDark"/>
 
     <TextView
         android:id="@+id/practices_text"
@@ -167,39 +179,18 @@
         android:textSize="22sp"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/year_field" />
-
-    <ToggleButton
-        android:id="@+id/reagents_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="40dp"
-        android:textOn="@string/reagents"
-        android:textOff="@string/reagents"
-        android:checked="true"
-        android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/year_field" />
-
-    <ToggleButton
-        android:id="@+id/instruments_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:textOn="@string/instruments"
-        android:textOff="@string/instruments"
-        android:visibility="invisible"
-        app:layout_constraintStart_toEndOf="@+id/reagents_btn"
-        app:layout_constraintTop_toBottomOf="@+id/year_field" />
+        app:layout_constraintTop_toBottomOf="@+id/year_field"
+        android:textColor="@color/black"/>
 
     <Button
         android:id="@+id/add_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/primaryDark"
         android:text="@string/add"
+        app:backgroundTint="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/semester_field" />
 

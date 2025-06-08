@@ -9,10 +9,10 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 
-import bcf.tfc.labstocker.MainActivity;
 import bcf.tfc.labstocker.R;
 import bcf.tfc.labstocker.adapters.ItemFeed;
 import bcf.tfc.labstocker.model.DataModel;
@@ -60,13 +60,10 @@ public class Utils {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (item instanceof ItemFeed) {
-                    ((ItemFeed) item).delete();
+                    ((ItemFeed) item).delete(context);
                 } else if (item instanceof Subject) {
-                    DataModel.deleteSubject((Subject) item);
-                } else if (item instanceof Warehouse || item instanceof Laboratory) {
-                    DataModel.deleteLocation((Location) item);
+                    DataModel.deleteSubject(context,(Subject) item);
                 }
-
                 dialog.dismiss();
             }
         });
@@ -133,10 +130,10 @@ public class Utils {
 
     public static void changeColors(ToggleButton button) {
         if (button.isChecked()) {
-            button.setBackgroundColor(Color.parseColor("#FF006400"));
+            button.setBackgroundColor(ContextCompat.getColor(button.getContext(), R.color.primaryDark));
             button.setTextColor(Color.WHITE);
         } else {
-            button.setBackgroundColor(Color.GRAY);
+            button.setBackgroundColor(ContextCompat.getColor(button.getContext(), R.color.secondaryDark));
             button.setTextColor(Color.BLACK);
         }
     }

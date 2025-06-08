@@ -92,15 +92,15 @@ public class SearchFragment extends Fragment {
         if (searchingReagents) {
             for (Reagent r : DataModel.reagents) {
                 if (r.getFormula().toLowerCase().contains(query) ||
-                        r.getDescription().toLowerCase().contains(query)) {
-                    itemList.add(new ItemFeed(r.getId(), r.getFormula(), null, null));
+                        (r.getDescription() !=null && r.getDescription().toLowerCase().contains(query))) {
+                    itemList.add(new ItemFeed(r.getId(), r.getFormula(), null, null, null, null));
                 }
             }
         } else {
             for (LabInstrument i : DataModel.labInstruments) {
                 if (i.getName().toLowerCase().contains(query) ||
-                        i.getObservations().toLowerCase().contains(query)) {
-                    itemList.add(new ItemFeed(i.getId(), i.getName(), null, null));
+                        (i.getObservations() != null && i.getObservations().toLowerCase().contains(query))) {
+                    itemList.add(new ItemFeed(i.getId(), i.getName(), null, null, null, null));
                 }
             }
         }

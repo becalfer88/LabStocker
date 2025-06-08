@@ -1,5 +1,6 @@
 package bcf.tfc.labstocker;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,11 +32,12 @@ public class LogActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // Material toolbar setup
         topBar = findViewById(R.id.topBar);
-        //topBar.setLogo(R.drawable.atomic);
-        //topBar.setTitle("");
+        topBar.setLogo(R.drawable.nombre_edit);
+        topBar.setTitle("");
         setSupportActionBar(topBar);
 
         // Load the first fragment by default

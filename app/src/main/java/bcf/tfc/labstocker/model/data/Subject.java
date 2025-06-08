@@ -108,12 +108,6 @@ public class Subject {
         map.put("year", year);
         map.put("semester", semester);
 
-        List<Map<String, Object>> practices = new ArrayList<>();
-        for (int i = 0; i < this.practices.size(); i++) {
-            practices.add(this.practices.get(i).toMap());
-
-        }
-        map.put("practices", practices);
         return map;
     }
 
@@ -140,8 +134,12 @@ public class Subject {
         ArrayList<ItemFeed> practicesFeed = new ArrayList<>();
         for (int i = 0; i < practices.size(); i++) {
             Practice p = practices.get(i);
-            practicesFeed.add(new ItemFeed(p.getId(), p.getName(),null, this.name));
+            practicesFeed.add(new ItemFeed(p.getId(), p.getName(),null, this.id ,this.getClass().getSimpleName(), null));
         }
         return practicesFeed;
+    }
+
+    public ArrayList<Practice> getPractices() {
+        return practices;
     }
 }

@@ -21,7 +21,9 @@ public class Account {
     /**
      * Empty constructor for Firebase
      */
-    public Account(){}
+    public Account(){
+        lastAccountId++;
+    }
 
     /**
      * Constructor with extra parameters
