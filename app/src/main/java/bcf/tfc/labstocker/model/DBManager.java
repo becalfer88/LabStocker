@@ -1,7 +1,5 @@
 package bcf.tfc.labstocker.model;
 
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
@@ -16,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import bcf.tfc.labstocker.R;
 import bcf.tfc.labstocker.model.data.DBCallback;
 import bcf.tfc.labstocker.model.data.LabInstrument;
 import bcf.tfc.labstocker.model.data.Laboratory;
@@ -27,17 +24,13 @@ import bcf.tfc.labstocker.model.data.Subject;
 import bcf.tfc.labstocker.model.data.Warehouse;
 import bcf.tfc.labstocker.model.data.user.Account;
 
+/**
+ * Class that handles all the database operations.
+ * It's methods need to receive a callback as a parameter to return the result.
+ *
+ * @author Beatriz Calzo
+ */
 public class DBManager {
-
-    public static DBCallback<Boolean> getSimpleBoolCallback() {
-        return new DBCallback<Boolean>() {
-            @Override
-            public void onSuccess(Boolean result) {}
-
-            @Override
-            public void onFailure(Exception e) {}
-        };
-    }
 
     // Account
     public static void upsertAccount(Account account, DBCallback<Boolean> cb) {
@@ -80,17 +73,6 @@ public class DBManager {
                         accounts.add(Account.fromMap(doc.getData()));
                     }
                     cb.onSuccess(accounts);
-                })
-                .addOnFailureListener(cb::onFailure);
-    }
-
-    public static void deleteAccount(int id, DBCallback<Boolean> cb) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        db.document("users/account" + id)
-                .delete()
-                .addOnSuccessListener(docRef -> {
-                    cb.onSuccess(true);
                 })
                 .addOnFailureListener(cb::onFailure);
     }
@@ -213,7 +195,7 @@ public class DBManager {
     public static void upsertReagent(Reagent reagent, DBCallback<Boolean> cb) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.document("reagents/"+reagent.getId())
+        db.document("reagents/" + reagent.getId())
                 .update(reagent.toMap())
                 .addOnSuccessListener(docRef -> {
                     cb.onSuccess(true);
@@ -239,7 +221,7 @@ public class DBManager {
     public static void upsertLabInstrument(LabInstrument labInstrument, DBCallback<Boolean> cb) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.document("instruments"+ labInstrument.getId())
+        db.document("instruments" + labInstrument.getId())
                 .update(labInstrument.toMap())
                 .addOnSuccessListener(docRef -> {
                     cb.onSuccess(true);
@@ -307,7 +289,7 @@ public class DBManager {
         db.collection("laboratories")
                 .get()
                 .addOnSuccessListener(collectionRef -> {
-                    List<Laboratory> locations =new ArrayList<>();
+                    List<Laboratory> locations = new ArrayList<>();
                     for (DocumentSnapshot doc : collectionRef.getDocuments()) {
                         locations.add(Laboratory.fromMap(doc.getData()));
                     }
@@ -362,6 +344,7 @@ public class DBManager {
                 warehousesRef.get()
         );
 
+        // Wait for all tasks to complete
         Tasks.whenAllSuccess(tasks)
                 .addOnSuccessListener(results -> {
                     int maxID = 0;
@@ -381,7 +364,6 @@ public class DBManager {
                 })
                 .addOnFailureListener(cb::onFailure);
     }
-
 
 
 }

@@ -12,6 +12,13 @@ import java.util.List;
 
 import bcf.tfc.labstocker.R;
 
+/**
+ * Basic adapter for a list of SimpleItem
+ * It's used to show a list of items with a single text and a custom listener.
+ *
+ * @see SimpleItem
+ * @author Beatriz Calzo
+ */
 public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ViewHolder> {
 
     public interface OnItemClickListener {

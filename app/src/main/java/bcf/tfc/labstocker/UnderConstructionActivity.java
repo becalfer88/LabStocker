@@ -9,6 +9,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+/**
+ * UnderConstructionActivity.
+ *
+ * @author Beatriz Calzo
+ */
 public class UnderConstructionActivity extends AppCompatActivity {
 
     @Override

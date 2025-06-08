@@ -4,15 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.activity.EdgeToEdge;
@@ -26,9 +21,6 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.LinkedList;
-
-import bcf.tfc.labstocker.adapters.ItemFeed;
 import bcf.tfc.labstocker.fragments.FormFragment;
 import bcf.tfc.labstocker.fragments.HomeFragment;
 import bcf.tfc.labstocker.fragments.OptionsFragment;
@@ -40,6 +32,11 @@ import bcf.tfc.labstocker.model.data.DBCallback;
 import bcf.tfc.labstocker.model.data.user.Account;
 import bcf.tfc.labstocker.utils.Utils;
 
+/**
+ * Main activity. Contains the navigation bar, the bottom navigation bar and the fragments
+ *
+ * @author Beatriz Calzo
+ * */
 public class MainActivity extends AppCompatActivity {
 
     private static final String ACCOUNT_TEXT = "account";
@@ -136,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Listener for the top enu items.
+     * Listener for the top menu items.
      *
      * @param item
      * @return
@@ -171,6 +168,11 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
+    /**
+     * Change the logged state of the user and save it to shared preferences.
+     * @param logged
+     * @param account
+     */
     public void loggedCheck(Boolean logged, String account){
         SharedPreferences sharedPreferences = getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -187,6 +189,12 @@ public class MainActivity extends AppCompatActivity {
         return account;
     }
 
+    /**
+     * Configure the toggle buttons to change screens.
+     * @param fragment
+     * @param btn1
+     * @param btn2
+     */
     public void configToggleButtons(Fragment fragment, ToggleButton btn1, ToggleButton btn2) {
 
         btn1.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
@@ -211,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
         Utils.changeColors(btn2);
 
     }
+
 
     private static void changemScreen(Fragment fragment) {
         if (fragment instanceof OptionsFragment) {

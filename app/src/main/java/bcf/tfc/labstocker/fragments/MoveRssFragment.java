@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -26,7 +25,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,8 +32,6 @@ import bcf.tfc.labstocker.R;
 import bcf.tfc.labstocker.adapters.SimpleAdapter;
 import bcf.tfc.labstocker.adapters.SimpleItem;
 import bcf.tfc.labstocker.model.DBManager;
-import bcf.tfc.labstocker.adapters.FeedAdapter;
-import bcf.tfc.labstocker.adapters.ItemFeed;
 import bcf.tfc.labstocker.model.DataModel;
 import bcf.tfc.labstocker.model.data.DBCallback;
 import bcf.tfc.labstocker.model.data.LabInstrument;
@@ -48,6 +44,8 @@ import bcf.tfc.labstocker.utils.Utils;
 /**
  * A simple {@link Fragment} subclass.
  * create an instance of this fragment.
+ *
+ * @author Beatriz Calzo
  */
 public class MoveRssFragment extends Fragment {
 
@@ -107,6 +105,7 @@ public class MoveRssFragment extends Fragment {
             selectedItemText.setText(item.getLabel());
         });
 
+        // Listener for the search input, it will perform a search each time the text changes
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -120,6 +119,7 @@ public class MoveRssFragment extends Fragment {
             public void afterTextChanged(Editable s) {}
         });
 
+        // Listener for the transfer button. It will transfer the selected item and quantity from one location to another
         transferButton.setOnClickListener(v -> {
             if (fromLocation == null || toLocation == null || selectedItem == null || quantityInput.getText().toString().isEmpty()) {
                 AlertDialog dialog = Utils.getErrorDialog(getContext(), getString(R.string.all_fields_are_required));
@@ -143,7 +143,7 @@ public class MoveRssFragment extends Fragment {
 
             if (selectedItem instanceof Reagent) {
                 fromLocation.updateReagent((Reagent) selectedItem, (float) originalFrom.getValue() - (float) qty, originalFrom.getUnit());
-
+                // In case the item doesn't exist in the toLocation yet
                 if (originalTo == null) {
                     toLocation.addReagent((Reagent) selectedItem, (float) qty, originalFrom.getUnit());
                 } else {
@@ -151,7 +151,7 @@ public class MoveRssFragment extends Fragment {
                 }
             } else {
                 fromLocation.updateLabInstrument((LabInstrument) selectedItem, (float) originalFrom.getValue() - (float) qty, originalFrom.getUnit());
-
+                // In case the item doesn't exist in the toLocation yet
                 if (originalTo == null) {
                     toLocation.addLabInstrument((LabInstrument) selectedItem, (float) qty, originalFrom.getUnit());
                 } else {
@@ -159,6 +159,7 @@ public class MoveRssFragment extends Fragment {
                 }
             }
 
+            // Save the transfer to the database
             DBManager.transferResources(fromLocation, toLocation, new DBCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean result) {
@@ -181,6 +182,7 @@ public class MoveRssFragment extends Fragment {
     }
 
     private void performSearch(String query) {
+        // Perform the search in a separate thread
         executor.execute(() -> {
             List<SimpleItem> filtered = new ArrayList<>();
             if (fromLocation != null && query != null) {
@@ -194,6 +196,7 @@ public class MoveRssFragment extends Fragment {
         });
     }
 
+    // Destroy the executor when the view is destroyed
     @Override
     public void onDestroyView() {
         super.onDestroyView();

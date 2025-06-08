@@ -2,6 +2,7 @@ package bcf.tfc.labstocker.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,12 @@ import bcf.tfc.labstocker.UnderConstructionActivity;
 import bcf.tfc.labstocker.fragments.FormFragment;
 import bcf.tfc.labstocker.utils.Utils;
 
+/**
+ * Adapter for different types of items through ItemFeed conversion.
+ *
+ * @author Beatriz Calzo
+ * @see ItemFeed
+ */
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder> {
 
     private List<ItemFeed> feedList;
@@ -67,10 +74,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
         }
 
         public void bind(ItemFeed feed) {
-            if (feed == null){
+            if (feed == null) {
                 return;
             }
-            if (feed.getQuantity() == null){
+            if (feed.getQuantity() == null) {
                 quantity.setVisibility(View.INVISIBLE);
             } else {
                 quantity.setVisibility(View.VISIBLE);
@@ -82,7 +89,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                 @Override
                 public void onClick(View v) {
 
-                    if (feed. getParentType() != null &&feed.getParentType().equals("Subject")){
+                    if (feed.getParentType() != null && feed.getParentType().equals("Subject")) {
                         FormFragment fragment = FormFragment.newInstance("practices", feed.getId(), feed.getIdParent());
                         ((MainActivity) context).loadFragment(fragment);
                     } else {
@@ -92,17 +99,20 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedViewHolder
                 }
             });
 
-            if (feed.getIdParent() == null){
+            if (feed.getIdParent() == null) {
                 deleteItem.setVisibility(View.INVISIBLE);
             } else {
                 deleteItem.setVisibility(View.VISIBLE);
                 deleteItem.setOnClickListener(new View.OnClickListener() {
+
                     @Override
                     public void onClick(View v) {
+
                         AlertDialog dialog = Utils.getDeleteDialog(v.getContext(), feed);
                         dialog.show();
                         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(v.getContext(), R.color.secondaryDark));
                         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(v.getContext(), R.color.primaryDark));
+
                     }
                 });
             }

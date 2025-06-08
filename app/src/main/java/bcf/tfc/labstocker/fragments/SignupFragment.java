@@ -12,9 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import bcf.tfc.labstocker.MainActivity;
 import bcf.tfc.labstocker.R;
 import bcf.tfc.labstocker.model.DBManager;
@@ -25,6 +22,8 @@ import bcf.tfc.labstocker.utils.Utils;
 
 /**
  * A simple Fragment subclass for the signup page
+ *
+ * @author Beatriz Calzo
  */
 public class SignupFragment extends Fragment {
 

@@ -4,6 +4,11 @@ import java.util.Map;
 
 import bcf.tfc.labstocker.model.DataModel;
 
+/**
+ * Class Laboratory. It is a subclass of Location
+ *
+ * @author Beatriz Calzo
+ */
 public class Laboratory extends Location {
 
 
@@ -29,12 +34,21 @@ public class Laboratory extends Location {
         this.warehouse = warehouse;
     }
 
+    /**
+     * Serializes the object into a map for Firebase
+     * @return
+     */
     public Map<String, Object> toMap() {
         Map<String, Object> map = super.toMap();
         map.put("warehouse", warehouse.getId());
         return map;
     }
 
+    /**
+     * Deserializes the object from a map for Firebase
+     * @param map
+     * @return
+     */
     public static Laboratory fromMap(Map<String, Object> map) {
         Laboratory lab = new Laboratory();
         Location.fromMap(lab, map);

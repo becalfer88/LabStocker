@@ -9,6 +9,11 @@ import bcf.tfc.labstocker.adapters.ItemFeed;
 import bcf.tfc.labstocker.model.DataModel;
 import bcf.tfc.labstocker.utils.Utils;
 
+/**
+ * Class Practice. Contains information about a practice
+ *
+ * @author Beatriz Calzo
+ */
 public class Practice {
     private static int lastId = 0;
 
@@ -97,6 +102,10 @@ public class Practice {
         return name;
     }
 
+    /**
+     * Serializes the practice to a map for Firebase
+     * @return
+     */
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
@@ -125,6 +134,11 @@ public class Practice {
         return map;
     }
 
+    /**
+     * Deserializes the practice from a map
+     * @param map
+     * @return
+     */
     public static Practice fromMap(Map<String, Object> map) {
         String id = (String) map.get("id");
         String name = (String) map.get("name");
@@ -165,6 +179,11 @@ public class Practice {
         }
     }
 
+    /**
+     * Build an item feed for each reagent
+     * @param subject
+     * @return a list of ItemFeed
+     */
     public ArrayList<ItemFeed> getReagentFeed(Subject subject) {
         ArrayList<ItemFeed> feed = new ArrayList<ItemFeed>();
         for (Map.Entry<Reagent, Quantity> entry : this.reagents.entrySet()) {
@@ -173,6 +192,11 @@ public class Practice {
         return feed;
     }
 
+    /**
+     * Build an item feed for each instrument
+     * @param subject
+     * @return a list of ItemFeed
+     */
     public ArrayList<ItemFeed> getInstrumentFeed(Subject subject) {
         ArrayList<ItemFeed> feed = new ArrayList<ItemFeed>();
         for (Map.Entry<LabInstrument, Quantity> entry : this.labInstruments.entrySet()) {

@@ -8,6 +8,11 @@ import java.util.Map;
 import bcf.tfc.labstocker.adapters.ItemFeed;
 import bcf.tfc.labstocker.utils.Utils;
 
+/**
+ * Class Subject. Represents a subject than contains a list of practices
+ *
+ * @author Beatriz Calzo
+ */
 public class Subject {
 
     private String id;
@@ -100,6 +105,10 @@ public class Subject {
         return name;
     }
 
+    /**
+     * Serialize the subject to a map
+     * @return
+     */
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
@@ -111,6 +120,11 @@ public class Subject {
         return map;
     }
 
+    /**
+     * Deserialize the subject from a map
+     * @param map
+     * @return
+     */
     public static Subject fromMap(Map<String, Object> map) {
         String id = (String) map.get("id");
         String name = (String) map.get("name");
@@ -122,6 +136,10 @@ public class Subject {
         return subject;
     }
 
+    /**
+     * Remove a practice
+     * @param id
+     */
     public void removeItem(String id) {
         for (int i = 0; i < practices.size(); i++) {
             if (practices.get(i).getId().equals(id)) {
@@ -130,6 +148,10 @@ public class Subject {
         }
     }
 
+    /**
+     * Transform practices to ItemFeed
+     * @return a list of ItemFeed
+     */
     public ArrayList<ItemFeed> getPracticesFeed() {
         ArrayList<ItemFeed> practicesFeed = new ArrayList<>();
         for (int i = 0; i < practices.size(); i++) {

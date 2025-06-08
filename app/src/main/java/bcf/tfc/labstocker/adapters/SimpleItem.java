@@ -1,5 +1,10 @@
 package bcf.tfc.labstocker.adapters;
 
+/**
+ * Basic item for the {@link SimpleAdapter}
+ *
+ * @author Beatriz Calzo
+ */
 public class SimpleItem {
     private String id;
     private String label;

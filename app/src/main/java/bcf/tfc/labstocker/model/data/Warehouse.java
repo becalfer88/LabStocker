@@ -1,10 +1,12 @@
 package bcf.tfc.labstocker.model.data;
 
-import androidx.annotation.NonNull;
-
 import java.util.Map;
 
-
+/**
+ * Class Warehouse. This class is used to represent a warehouse.
+ *
+ * @author Beatriz Calzo
+ */
 public class Warehouse extends Location {
 
     public Warehouse() {
@@ -16,6 +18,11 @@ public class Warehouse extends Location {
     }
 
 
+    /**
+     * Deserializes a warehouse from a map.
+     * @param map
+     * @return
+     */
     public static Warehouse fromMap(Map<String, Object> map) {
         Warehouse warehouse = new Warehouse();
         Location.fromMap(warehouse, map);

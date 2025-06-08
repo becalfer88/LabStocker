@@ -30,7 +30,7 @@ import bcf.tfc.labstocker.model.DataModel;
 import bcf.tfc.labstocker.utils.Utils;
 
 /**
- * A simple Fragment subclass for login
+ * A simple {@link Fragment} subclass for login.
  */
 public class LoginFragment extends Fragment {
 
@@ -62,16 +62,18 @@ public class LoginFragment extends Fragment {
         view.findViewById(R.id.action_login).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DBManager.findAccount(email.getEditableText().toString(), new DBCallback<Boolean>(){
+                // Check if account exists
+                DBManager.findAccount(email.getEditableText().toString(), new DBCallback<Boolean>() {
                     @Override
                     public void onSuccess(Boolean exists) {
                         if (exists) {
+                            // Get account
                             DBManager.getAccount(email.getEditableText().toString(), new DBCallback<Account>() {
                                 @Override
                                 public void onSuccess(Account account) {
                                     if (account.getPassword().equals(password.getEditableText().toString())) {
                                         // Save Preferences
-                                        if (logged.isChecked()){
+                                        if (logged.isChecked()) {
                                             SharedPreferences.Editor editor = sharedPreferences.edit();
                                             editor.putString(ACCOUNT_TEXT, email.getEditableText().toString());
                                             editor.putInt(ACCOUNT_TYPE_TEXT, account.getType().getId());
@@ -84,6 +86,7 @@ public class LoginFragment extends Fragment {
                                             editor.putBoolean(LOGGED_TEXT, false);
                                             editor.apply();
                                         }
+                                        // Start main activity after login
                                         Intent intent = new Intent(getActivity(), MainActivity.class);
                                         intent.putExtra(ACCOUNT_TEXT, account.getEmail());
                                         startActivity(intent);
@@ -104,13 +107,12 @@ public class LoginFragment extends Fragment {
                             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(getContext(), R.color.primaryDark));
                         }
                     }
+
                     @Override
                     public void onFailure(Exception e) {
                         Utils.getErrorDialog(getActivity(), getString(R.string.impossible_check));
                     }
-                        }
-                );
-
+                });
             }
         });
 
@@ -118,6 +120,7 @@ public class LoginFragment extends Fragment {
         view.findViewById(R.id.forgotten_password).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // WIP
                 Intent intent = new Intent(getActivity(), UnderConstructionActivity.class);
                 startActivity(intent);
             }
@@ -133,7 +136,7 @@ public class LoginFragment extends Fragment {
      * @param email
      * @return The AlertDialog created through the builder
      */
-    private  @NonNull AlertDialog getDialog(EditText email) {
+    private @NonNull AlertDialog getDialog(EditText email) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Add the buttons.
         builder.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {

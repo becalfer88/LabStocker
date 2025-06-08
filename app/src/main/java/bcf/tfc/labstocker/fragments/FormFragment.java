@@ -37,9 +37,13 @@ import bcf.tfc.labstocker.model.data.Warehouse;
 import bcf.tfc.labstocker.utils.Utils;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A complex {@link Fragment} subclass.
  * Use the {@link FormFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *
+ * Reusable form for showing and editing data (subject, laboratory, warehouse, practice).
+ *
+ * @author Beatriz Calzo
  */
 public class FormFragment extends Fragment {
 

@@ -17,7 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
@@ -33,10 +32,12 @@ import bcf.tfc.labstocker.utils.Utils;
  * A simple {@link Fragment} subclass.
  * Use the {@link OptionsFragment#newInstance} factory method to
  * create an instance of this fragment.
+ * It is used to choose between create or edit objects (laboratories, warehouses, subjects)
+ *
+ * @author Beatriz Calzo
  */
 public class OptionsFragment extends Fragment {
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_SCREEN = "screen";
     private static ArrayList<View> alertComponents = new ArrayList<>();
 
@@ -130,7 +131,8 @@ public class OptionsFragment extends Fragment {
 
 
     /**
-     * Create a dialog builder that provides the interface to create and show a simple alert dialog.
+     * Create a dialog builder that provides the interface to create and show an alert dialog.
+     * It contains spinners to choose the object to edit.
      * Set positive button with its click listener and the message.
      *
      * @return The AlertDialog created through the builder
@@ -186,7 +188,6 @@ public class OptionsFragment extends Fragment {
                 break;
             }
         }
-
 
         builder.setView(view);
         // Add the buttons.

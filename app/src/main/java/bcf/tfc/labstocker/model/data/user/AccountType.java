@@ -1,5 +1,11 @@
 package bcf.tfc.labstocker.model.data.user;
 
+/**
+ * Class AccountType. Represents the type of an account.
+ * It will be set on DB and will be used to define the permissions.
+ *
+ * @author Beatriz Calzo
+ */
 public enum AccountType {
 
     BASIC (4), TECHNICIAN (3), PROFESSOR (2), ADMIN (1);

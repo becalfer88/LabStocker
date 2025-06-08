@@ -9,6 +9,11 @@ import bcf.tfc.labstocker.adapters.ItemFeed;
 import bcf.tfc.labstocker.adapters.SimpleItem;
 import bcf.tfc.labstocker.model.DataModel;
 
+/**
+ * Class Location. Represents a physical location that contains reagents and lab instruments.
+ *
+ * @author Beatriz Calzo
+ */
 public class Location {
 
     private static int lastId = 0;
@@ -109,6 +114,10 @@ public class Location {
         return this.labInstruments.get(instrument);
     }
 
+    /**
+     * Serializes the location into a map for Firebase
+     * @return
+     */
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
@@ -133,6 +142,11 @@ public class Location {
         return map;
     }
 
+    /**
+     * Deserializes the location from a map for Firebase
+     * @param location
+     * @param map
+     */
     public static void fromMap(Location location, Map<String, Object> map) {
         location.id = (String) map.get("id");
         location.address = (String) map.get("address");
@@ -190,6 +204,11 @@ public class Location {
         return feed;
     }
 
+    /**
+     * Search for Reagents and Instruments in the location
+     * @param query
+     * @return A list of SimpleItems builded from Reagents and Instruments
+     */
     public ArrayList<SimpleItem> search(String query) {
         ArrayList<SimpleItem> feed = new ArrayList<>();
         String name;

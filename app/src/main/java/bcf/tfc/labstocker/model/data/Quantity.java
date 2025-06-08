@@ -5,6 +5,11 @@ import androidx.annotation.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class Quantity. Represents a quantity with a value and a unit
+ *
+ * @author Beatriz Calzo
+ */
 public class Quantity {
 
     private double value;
@@ -36,6 +41,10 @@ public class Quantity {
         this.unit = unit;
     }
 
+    /**
+     * Serializes the quantity to a map
+     * @return
+     */
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("value", value);
@@ -43,6 +52,11 @@ public class Quantity {
         return map;
     }
 
+    /**
+     * Deserializes the quantity from a map
+     * @param map
+     * @return
+     */
     public static Quantity fromMap(Map<String, Object> map) {
         double value = ((Number) map.get("value")).doubleValue();
         String unit = (String) map.get("unit");

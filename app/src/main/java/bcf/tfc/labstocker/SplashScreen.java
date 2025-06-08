@@ -18,6 +18,12 @@ import com.google.firebase.FirebaseApp;
 import bcf.tfc.labstocker.model.DataModel;
 import bcf.tfc.labstocker.model.data.DBCallback;
 
+/**
+ * Splash screen. It will check if the user is logged in and redirect to the appropriate activity
+ * after receiving all data from the database.
+ *
+ * @author Beatriz Calzo
+ */
 public class SplashScreen extends AppCompatActivity {
 
     private final String ACCOUNT_TEXT = "account";
@@ -36,6 +42,7 @@ public class SplashScreen extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        //Disable rotation
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         FirebaseApp.initializeApp(this);
@@ -52,7 +59,7 @@ public class SplashScreen extends AppCompatActivity {
                                }
                            }
         );
-        //splashScreenStart();
+
         SharedPreferences sharedPreferences = getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
 
         account = sharedPreferences.getString(ACCOUNT_TEXT, "");

@@ -18,6 +18,11 @@ import com.google.android.material.appbar.MaterialToolbar;
 import bcf.tfc.labstocker.fragments.LoginFragment;
 import bcf.tfc.labstocker.fragments.SignupFragment;
 
+/**
+ * Base activity for the login and signup pages
+ *
+ * @author Beatriz Calzo
+ */
 public class LogActivity extends AppCompatActivity {
 
     MaterialToolbar topBar;

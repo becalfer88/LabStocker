@@ -29,13 +29,14 @@ import bcf.tfc.labstocker.model.DataModel;
 
 /**
  * A simple Fragment subclass.
+ *
+ * @author Beatriz Calzo
  */
 public class ProfileFragment extends Fragment {
 
-    private final String ACCOUNT_TYPE_TEXT = "accountType";
+    private final String ACCOUNT_TYPE_TEXT = "accountType"; //It will be used to change the visualization mode
     private final String LOGGED_TEXT = "logged";
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_ACCOUNT = "account";
 
     private String mAccount;

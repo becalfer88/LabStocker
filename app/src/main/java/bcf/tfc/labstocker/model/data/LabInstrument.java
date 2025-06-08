@@ -3,6 +3,11 @@ package bcf.tfc.labstocker.model.data;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class LabInstrument. Represents a lab instrument.
+ *
+ * @author Beatriz Calzo
+ */
 public class LabInstrument {
 
     private String id;
@@ -66,6 +71,10 @@ public class LabInstrument {
         return name;
     }
 
+    /**
+     * Serializes the object to a map for Firebase
+     * @return
+     */
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
@@ -76,6 +85,11 @@ public class LabInstrument {
         return map;
     }
 
+    /**
+     * Deserializes the object from a map for Firebase
+     * @param map
+     * @return
+     */
     public static LabInstrument fromMap(Map<String, Object> map) {
         String id = (String) map.get("id");
         String name = (String) map.get("name");

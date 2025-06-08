@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class Account. Represents a client account.
- * It can contain a maximum of 4 users.
+ * Class Account. Represents a employee account.
  *
+ * @author Beatriz Calzo
  */
 public class Account {
 
@@ -100,6 +100,10 @@ public class Account {
         return this.type == AccountType.ADMIN;
     }
 
+    /**
+     * Serializes the account to a map for Firebase
+     * @return
+     */
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
@@ -110,6 +114,11 @@ public class Account {
         return map;
     }
 
+    /**
+     * Deserializes the account from a map for Firebase
+     * @param map
+     * @return
+     */
     public static Account fromMap(Map<String, Object> map) {
         Account account = new Account();
         account.setId((int) (long) map.get("id"));

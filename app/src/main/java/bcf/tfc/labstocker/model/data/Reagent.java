@@ -3,6 +3,11 @@ package bcf.tfc.labstocker.model.data;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class Reagent. Represents a reagent that can be used in a practice and stored in a location
+ *
+ * @author Beatriz Calzo
+ */
 public class Reagent {
 
     private String id;
@@ -73,6 +78,10 @@ public class Reagent {
         return description;
     }
 
+    /**
+     * Serializes the object into a map
+     * @return
+     */
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
@@ -83,11 +92,15 @@ public class Reagent {
         return map;
     }
 
+    /**
+     * Deserializes the object from a map
+     * @param map
+     * @return
+     */
     public static Reagent fromMap(Map<String, Object> map) {
         String id = (String) map.get("id");
         String formula = (String) map.get("formula");
         ReagentType type = ReagentType.fromMap((Map<String, Object>) map.get("type"));
-        String status = (String) map.get("status");
         String description = (String) map.get("description");
         String concentration = (String) map.get("concentration");
         return new Reagent(id, formula, type, description, concentration);

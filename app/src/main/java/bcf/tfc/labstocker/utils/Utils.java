@@ -3,6 +3,7 @@ package bcf.tfc.labstocker.utils;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
@@ -16,12 +17,14 @@ import java.util.ArrayList;
 import bcf.tfc.labstocker.R;
 import bcf.tfc.labstocker.adapters.ItemFeed;
 import bcf.tfc.labstocker.model.DataModel;
-import bcf.tfc.labstocker.model.data.Laboratory;
-import bcf.tfc.labstocker.model.data.Location;
 import bcf.tfc.labstocker.model.data.Subject;
-import bcf.tfc.labstocker.model.data.Warehouse;
 
 
+/**
+ * Utility class
+ *
+ * @author Beatriz Calzo
+ */
 public class Utils {
 
     public static boolean validateEmail(String email) {
@@ -52,6 +55,12 @@ public class Utils {
         return dialog;
     }
 
+    /**
+     * Creates an AlertDialog with the delete confirmation
+     * @param context
+     * @param item
+     * @return
+     */
     public static @NonNull AlertDialog getDeleteDialog(Context context, Object item)  {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(R.string.delete);
@@ -59,10 +68,12 @@ public class Utils {
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+
                 if (item instanceof ItemFeed) {
-                    ((ItemFeed) item).delete(context);
+                        ((ItemFeed) item).delete(context);
                 } else if (item instanceof Subject) {
-                    DataModel.deleteSubject(context,(Subject) item);
+                        DataModel.deleteSubject(context, (Subject) item);
                 }
                 dialog.dismiss();
             }
@@ -79,7 +90,7 @@ public class Utils {
 
 
     /**
-     *
+     * Changes the visibility of a view
      * @param view
      */
     public static void changeVisibility(View view){
@@ -91,7 +102,7 @@ public class Utils {
     }
 
     /**
-     *
+     * Changes the visibility of a list of views
      * @param views
      */
     public static void setVisibility(ArrayList<View> views){
@@ -100,6 +111,11 @@ public class Utils {
         }
     }
 
+    /**
+     * Sets the editability of a list of views
+     * @param views
+     * @param editable
+     */
     public static void setEditable(ArrayList<View> views, boolean editable){
         for (View view : views) {
             if (!(view instanceof CompoundButton)) {
@@ -109,6 +125,12 @@ public class Utils {
 
     }
 
+    /**
+     * Switches the parameter it receives.
+     * Laboratories for warehouses and vice versa, reagents for instruments and vice versa
+     * @param screen
+     * @return
+     */
     public static @NonNull String getNewScreen(String screen) {
         switch (screen) {
             case "laboratories":
@@ -128,6 +150,10 @@ public class Utils {
     }
 
 
+    /**
+     * changes the color of a toggle button
+     * @param button
+     */
     public static void changeColors(ToggleButton button) {
         if (button.isChecked()) {
             button.setBackgroundColor(ContextCompat.getColor(button.getContext(), R.color.primaryDark));
@@ -138,6 +164,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Builds an id
+     * @param id
+     * @param name
+     * @param parent
+     * @return
+     */
     public static String generateId(String id, String name, String parent) {
         String words[] =  parent.split(" ");
         for (String word : words) {

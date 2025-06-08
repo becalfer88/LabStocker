@@ -27,6 +27,8 @@ import bcf.tfc.labstocker.model.DataModel;
  * A simple {@link Fragment} subclass.
  * Use the {@link SearchFragment#newInstance} factory method to
  * create an instance of this fragment.
+ *
+ * @author Beatriz Calzo
  */
 public class SearchFragment extends Fragment {
 
@@ -69,6 +71,7 @@ public class SearchFragment extends Fragment {
         adapter = new FeedAdapter(itemList);
         resultRecycler.setAdapter(adapter);
 
+        // Perform search dynamically
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
