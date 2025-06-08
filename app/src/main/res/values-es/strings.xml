@@ -4,7 +4,6 @@
     <string name="log_in">Iniciar sesión</string>
     <string name="under_constr">En construcción...</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="email">Correo electrónico</string>
     <string name="password">Contraseña</string>
     <string name="repeat_password">Repetir contraseña</string>
@@ -63,4 +62,7 @@
     <string name="invalid_quantity">Cantidad inválida</string>
     <string name="searching">Buscando...</string>
     <string name="search_reagent">Buscar reactivo</string>
+    <string name="saved">Guardado</string>
+    <string name="deleted">Borrado</string>
+    <string name="practice">Practica</string>
 </resources>
